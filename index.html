@@ -3,472 +3,446 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f6fc">
   <title>Classe 5e 3</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 </head>
+
 <body>
+  <div class="page-background"></div>
 
-<header class="topbar">
-  <div class="brand">🎓 <span>Classe 5e 3</span></div>
-  <div id="account"></div>
-</header>
-
-<main>
-  <section id="login" class="login-card">
-    <h1>Bienvenue en 5e 3</h1>
-    <p>Choisis ton espace pour continuer.</p>
-    <button onclick="studentLogin()">Espace élève</button>
-    <button class="secondary" onclick="delegateLogin()">Espace délégué</button>
-  </section>
-
-  <section id="app" hidden>
-    <div class="welcome">
-      <div>
-        <p class="eyebrow">ESPACE DE CLASSE</p>
-        <h1 id="hello">Bonjour !</h1>
-      </div>
-      <span class="class-tag">5e 3</span>
-    </div>
-
-    <nav class="tabs">
-      <button onclick="showTab('edt')">📅 Emploi du temps</button>
-      <button onclick="showTab('infos')">📢 Informations</button>
-      <button onclick="showTab('messages')">💬 Discussions</button>
-      <button id="adminTab" onclick="showTab('admin')" hidden>⚙️ Administration</button>
-    </nav>
-
-    <section id="edt" class="panel">
-      <div class="panel-heading">
-        <div>
-          <p class="eyebrow">ORGANISATION DE LA CLASSE</p>
-          <h2>Emploi du temps</h2>
-        </div>
-        <div class="week-band">
-          <span>SEMAINE ACTUELLE</span>
-          <strong id="weekDisplay">A</strong>
-        </div>
-      </div>
-
-      <p id="dragHint" class="hint" hidden>
-        Maintiens le clic et glisse sur les cases pour choisir la durée du cours.
+  <section id="welcomeScreen" class="welcome-screen">
+    <div class="welcome-card">
+      <div class="logo-mark">5<span>3</span></div>
+      <p class="eyebrow">ESPACE DE CLASSE</p>
+      <h1>Bienvenue en<br><span>5e 3.</span></h1>
+      <p class="welcome-description">
+        Retrouvez l'emploi du temps, les informations et les discussions de la classe.
       </p>
 
-      <div class="schedule-scroll">
-        <div id="schedule" class="schedule">
-          <div class="corner">HEURE</div>
-          <div class="day-head">Lundi</div>
-          <div class="day-head">Mardi</div>
-          <div class="day-head">Mercredi</div>
-          <div class="day-head">Jeudi</div>
-          <div class="day-head">Vendredi</div>
-          <div id="timeLabels"></div>
-          <div id="dayColumns" class="day-columns"></div>
-        </div>
-      </div>
-      <p class="legend">🟣 Pause méridienne : 12 h – 13 h</p>
-    </section>
-
-    <section id="infos" class="panel" hidden>
-      <h2>Informations de la classe</h2>
-      <div id="announcementList" class="list"></div>
-      <p id="noAnnouncements" class="empty">Aucune annonce pour le moment.</p>
-    </section>
-
-    <section id="messages" class="panel" hidden>
-      <h2>Discussions</h2>
-      <div id="messageList" class="list"></div>
-      <p id="noMessages" class="empty">Aucun message pour le moment.</p>
-      <form id="messageForm">
-        <label>Destinataire</label>
-        <select id="messageTarget">
-          <option value="class">Toute la classe</option>
-          <option value="delegate">Le délégué – Ziyad</option>
-        </select>
-        <label>Message</label>
-        <textarea id="messageText" required placeholder="Écris ton message…"></textarea>
-        <button>Envoyer</button>
+      <form id="welcomeForm">
+        <label for="studentName">Ton prénom</label>
+        <input id="studentName" type="text" placeholder="Entre ton prénom" maxlength="30" required>
+        <button class="primary-button full-button" type="submit">
+          Accéder à la classe <span>→</span>
+        </button>
       </form>
-    </section>
-
-    <section id="admin" class="panel" hidden>
-      <h2>Administration</h2>
-
-      <div class="admin-card">
-        <h3>Changer la semaine actuelle</h3>
-        <p>Seuls les délégués peuvent modifier cette information.</p>
-        <select id="adminWeek">
-          <option value="A">Semaine A</option>
-          <option value="B">Semaine B</option>
-        </select>
-        <button onclick="changeWeek()">Valider la semaine</button>
-        <div class="inline">
-          <input id="newWeek" placeholder="Ajouter une semaine (ex. C)">
-          <button onclick="addWeek()">Ajouter</button>
-        </div>
-        <div id="weekManagement"></div>
-      </div>
-
-      <div class="admin-card">
-        <h3>Créer une information</h3>
-        <form id="announcementForm">
-          <input id="announcementTitle" placeholder="Titre" required>
-          <textarea id="announcementBody" placeholder="Information…" required></textarea>
-          <button>Publier</button>
-        </form>
-      </div>
-
-      <div class="admin-card">
-        <h3>Créer ou modifier un cours</h3>
-        <p class="hint">Tu peux aussi sélectionner directement un créneau dans l'emploi du temps.</p>
-        <div id="courseFormArea">
-          <p class="empty">Sélectionne une plage horaire dans l'emploi du temps.</p>
-        </div>
-        <div id="courseList" class="list"></div>
-      </div>
-    </section>
+      <p class="small-note">Espace de consultation de la classe 5e 3</p>
+    </div>
   </section>
-</main>
 
-<div id="toastArea" class="toast-area" aria-live="polite"></div>
+  <div id="app" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">5<span>3</span></div>
+        <div>
+          <strong>Classe 5e 3</strong>
+          <small>Notre espace de classe</small>
+        </div>
+      </div>
 
-<script>
-const KEY = "classe53_site_v3";
-const days = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi"];
-const hours = [8,9,10,11,13,14,15,16];
-let state = {
-  week: "A",
-  weeks: ["A","B"],
-  courses: [],
-  announcements: [],
-  messages: []
-};
-let role = "";
-let username = "";
-let selection = null;
-let dragging = false;
-let editingId = null;
+      <div class="sidebar-label">MENU PRINCIPAL</div>
+      <nav class="navigation">
+        <button class="nav-link active" data-page="schedule">
+          <span class="nav-icon">▦</span>
+          <span>Emploi du temps</span>
+        </button>
+        <button class="nav-link" data-page="news">
+          <span class="nav-icon">◈</span>
+          <span>Informations</span>
+        </button>
+        <button class="nav-link" data-page="messages">
+          <span class="nav-icon">☏</span>
+          <span>Discussions</span>
+        </button>
+      </nav>
 
-function load() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(KEY));
-    if (saved) state = {...state,...saved};
-  } catch(e) {}
-}
-function save() {
-  localStorage.setItem(KEY, JSON.stringify(state));
-}
-function id() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-function safe(s) {
-  return String(s ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-function studentLogin() {
-  const name = prompt("Ton prénom et ton nom :");
-  if (!name || !name.trim()) return;
-  enter(name.trim(), "student");
-}
-function delegateLogin() {
-  enter("Ziyad", "delegate");
-}
-function enter(name, selectedRole) {
-  username = name;
-  role = selectedRole;
-  document.getElementById("login").hidden = true;
-  document.getElementById("app").hidden = false;
-  document.getElementById("account").textContent = name;
-  document.getElementById("hello").textContent = "Bonjour " + name + " !";
-  document.getElementById("adminTab").hidden = role !== "delegate";
-  document.getElementById("dragHint").hidden = role !== "delegate";
-  document.getElementById("messageTarget").innerHTML =
-    role === "delegate"
-    ? '<option value="class">Toute la classe</option>'
-    : '<option value="class">Toute la classe</option><option value="delegate">Le délégué – Ziyad</option>';
-  render();
-  showTab("edt");
-}
-function showTab(tab) {
-  ["edt","infos","messages","admin"].forEach(id => {
-    document.getElementById(id).hidden = id !== tab;
-  });
-  if (tab === "messages") renderMessages();
-}
-function toast(title, detail="") {
-  const el = document.createElement("div");
-  el.className = "toast";
-  el.innerHTML = `<b>${safe(title)}</b>${detail ? `<span>${safe(detail)}</span>` : ""}`;
-  document.getElementById("toastArea").appendChild(el);
-  setTimeout(() => el.remove(), 4500);
-}
+      <div class="sidebar-bottom">
+        <div class="class-mini-card">
+          <div class="mini-card-icon">✦</div>
+          <strong>5e 3</strong>
+          <span>Une classe, une équipe.</span>
+        </div>
+        <button id="logoutButton" class="logout-button">Changer de prénom ↗</button>
+      </div>
+    </aside>
 
-function render() {
-  document.getElementById("weekDisplay").textContent = state.week;
-  renderSchedule();
-  renderWeeks();
-  renderCourses();
-  renderAnnouncements();
-  renderMessages();
-}
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="topbar-date">ESPACE SCOLAIRE</p>
+          <h2 id="pageHeading">Emploi du temps</h2>
+        </div>
+        <div class="profile-chip">
+          <div class="avatar" id="avatarInitial">É</div>
+          <div class="profile-text">
+            <strong id="profileName">Élève</strong>
+            <span>Classe de 5e 3</span>
+          </div>
+        </div>
+      </header>
 
-function renderSchedule() {
-  const timeLabels = document.getElementById("timeLabels");
-  const columns = document.getElementById("dayColumns");
-  timeLabels.innerHTML = "";
-  columns.innerHTML = "";
+      <!-- EMPLOI DU TEMPS -->
+      <section id="schedulePage" class="page-section">
+        <div class="welcome-banner">
+          <div>
+            <span class="banner-tag">NOTRE CLASSE</span>
+            <h1>Une nouvelle journée,<br>de nouveaux objectifs.</h1>
+            <p>Retrouve ici les horaires et les cours de la classe.</p>
+          </div>
+          <div class="banner-decoration">
+            <div class="decoration-circle circle-one"></div>
+            <div class="decoration-circle circle-two"></div>
+            <div class="decoration-symbol">✳</div>
+          </div>
+        </div>
 
-  hours.forEach(hour => {
-    const label = document.createElement("div");
-    label.className = "time-label";
-    label.textContent = `${String(hour).padStart(2,"0")}:00`;
-    timeLabels.appendChild(label);
-  });
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ORGANISATION</p>
+            <h3>Emploi du temps</h3>
+            <p class="muted">Les horaires de la semaine</p>
+          </div>
+          <div class="week-indicator">
+            <span class="week-dot"></span>
+            <span>Semaine <strong id="currentWeek">A</strong></span>
+          </div>
+        </div>
 
-  days.forEach(day => {
-    const col = document.createElement("div");
-    col.className = "day-column";
-    col.dataset.day = day;
+        <div class="schedule-card">
+          <div class="schedule-topline">
+            <div>
+              <strong>Planning hebdomadaire</strong>
+              <span>Horaires de 8 h à 17 h</span>
+            </div>
+            <span class="schedule-status">5e 3</span>
+          </div>
 
-    hours.forEach(hour => {
-      const cell = document.createElement("div");
-      cell.className = "hour-cell";
-      cell.dataset.day = day;
-      cell.dataset.hour = hour;
-      cell.addEventListener("pointerdown", startSelection);
-      cell.addEventListener("pointerenter", extendSelection);
-      col.appendChild(cell);
+          <div class="table-scroll">
+            <table class="timetable">
+              <thead>
+                <tr>
+                  <th class="time-heading">HEURE</th>
+                  <th>LUNDI</th>
+                  <th>MARDI</th>
+                  <th>MERCREDI</th>
+                  <th>JEUDI</th>
+                  <th>VENDREDI</th>
+                </tr>
+              </thead>
+              <tbody id="timetableBody"></tbody>
+            </table>
+          </div>
+          <div class="schedule-legend">
+            <span><i class="legend-dot lesson-dot"></i> Cours</span>
+            <span><i class="legend-dot break-dot"></i> Pause déjeuner</span>
+          </div>
+        </div>
+
+        <div class="bottom-info-grid">
+          <article class="info-card">
+            <div class="info-icon blue-icon">◷</div>
+            <div>
+              <span>HORAIRES</span>
+              <strong>08:00 – 17:00</strong>
+              <p>Les horaires de la journée</p>
+            </div>
+          </article>
+          <article class="info-card">
+            <div class="info-icon violet-icon">▤</div>
+            <div>
+              <span>PAUSE DÉJEUNER</span>
+              <strong>12:00 – 13:00</strong>
+              <p>Pause de la mi-journée</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- INFORMATIONS -->
+      <section id="newsPage" class="page-section hidden">
+        <div class="page-intro-card">
+          <div class="intro-icon">◈</div>
+          <div>
+            <p class="eyebrow">RESTER INFORMÉ</p>
+            <h3>Informations de la classe</h3>
+            <p>Les annonces importantes seront affichées ici.</p>
+          </div>
+        </div>
+
+        <div class="section-heading simple-heading">
+          <div>
+            <h3>Dernières informations</h3>
+            <p class="muted">Annonces destinées à toute la classe</p>
+          </div>
+        </div>
+
+        <div id="announcementsList" class="empty-state">
+          <div class="empty-icon">✦</div>
+          <h3>Aucune information pour le moment</h3>
+          <p>Les prochaines annonces de la classe apparaîtront ici.</p>
+        </div>
+      </section>
+
+      <!-- DISCUSSIONS -->
+      <section id="messagesPage" class="page-section hidden">
+        <div class="page-intro-card">
+          <div class="intro-icon message-intro-icon">☏</div>
+          <div>
+            <p class="eyebrow">ÉCHANGER ENSEMBLE</p>
+            <h3>Discussions</h3>
+            <p>Un espace pour communiquer avec la classe ou le délégué.</p>
+          </div>
+        </div>
+
+        <div class="discussion-layout">
+          <div class="discussion-main">
+            <div class="discussion-heading">
+              <div>
+                <h3 id="conversationTitle">Toute la classe</h3>
+                <p id="conversationDescription">Discussion visible par les membres de la classe</p>
+              </div>
+              <span class="online-indicator">● Espace classe</span>
+            </div>
+
+            <div class="conversation-tabs">
+              <button class="conversation-tab active" data-conversation="class">
+                Toute la classe
+              </button>
+              <button class="conversation-tab" data-conversation="delegate">
+                Le délégué – Ziyad
+              </button>
+            </div>
+
+            <div id="messageList" class="message-list">
+              <div class="empty-messages">
+                <div class="empty-icon">✉</div>
+                <strong>La discussion est vide</strong>
+                <span>Envoie le premier message !</span>
+              </div>
+            </div>
+
+            <form id="messageForm" class="message-form">
+              <input id="messageInput" type="text" placeholder="Écris ton message..." maxlength="1000" required>
+              <button type="submit" aria-label="Envoyer le message">➤</button>
+            </form>
+            <p class="message-disclaimer">
+              Dans cette version, les messages sont enregistrés uniquement sur cet appareil.
+            </p>
+          </div>
+
+          <aside class="discussion-side-card">
+            <div class="side-card-icon">✦</div>
+            <h3>Deux espaces pour échanger</h3>
+            <p><strong>Toute la classe</strong><br>Pour discuter avec les membres de la 5e 3.</p>
+            <div class="side-divider"></div>
+            <p><strong>Le délégué – Ziyad</strong><br>Pour lui envoyer un message privé.</p>
+            <div class="privacy-note">Les messages privés ne sont pas une messagerie sécurisée dans cette version locale.</div>
+          </aside>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>Classe de 5e 3</span>
+        <span>Notre espace de classe · <span id="footerYear"></span></span>
+      </footer>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "classe53_clean_v1";
+
+    const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
+    const periods = [
+      { label: "08:00", end: "09:00" },
+      { label: "09:00", end: "10:00" },
+      { label: "10:00", end: "11:00" },
+      { label: "11:00", end: "12:00" },
+      { label: "13:00", end: "14:00" },
+      { label: "14:00", end: "15:00" },
+      { label: "15:00", end: "16:00" },
+      { label: "16:00", end: "17:00" }
+    ];
+
+    let currentConversation = "class";
+    let student = localStorage.getItem("classe53_student_name") || "";
+
+    function loadData() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+          messages: { class: [], delegate: [] }
+        };
+      } catch {
+        return { messages: { class: [], delegate: [] } };
+      }
+    }
+
+    let data = loadData();
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      clearTimeout(window.toastTimeout);
+      window.toastTimeout = setTimeout(() => toast.classList.remove("visible"), 2600);
+    }
+
+    function enterApp(name) {
+      student = name.trim();
+      if (!student) return;
+      localStorage.setItem("classe53_student_name", student);
+      document.getElementById("welcomeScreen").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
+      document.getElementById("profileName").textContent = student;
+      document.getElementById("avatarInitial").textContent = student.charAt(0).toUpperCase();
+    }
+
+    document.getElementById("welcomeForm").addEventListener("submit", event => {
+      event.preventDefault();
+      enterApp(document.getElementById("studentName").value);
     });
 
-    columns.appendChild(col);
-  });
+    if (student) {
+      enterApp(student);
+    }
 
-  const lunch = document.createElement("div");
-  lunch.className = "lunch-row";
-  lunch.textContent = "🍽 PAUSE MÉRIDIENNE · 12 h – 13 h";
-  columns.prepend(lunch);
-
-  state.courses
-    .filter(c => c.week === state.week || c.week === "ALL")
-    .forEach(course => {
-      const col = [...columns.querySelectorAll(".day-column")]
-        .find(x => x.dataset.day === course.day);
-      if (!col) return;
-      const start = hours.indexOf(Number(course.start));
-      if (start < 0) return;
-      const duration = Number(course.end) - Number(course.start);
-      const card = document.createElement("div");
-      card.className = "course-card" + (course.cancelled ? " cancelled" : "");
-      card.style.setProperty("--course-color", course.color);
-      card.style.gridRow = `${start + 1} / span ${duration}`;
-      card.innerHTML = `
-        <b>${safe(course.subject)}</b>
-        <span>${safe(course.start)} h – ${safe(course.end)} h</span>
-        <small>${safe(course.teacher || "Professeur à préciser")}</small>
-        <small>${safe(course.room || "Salle à préciser")}</small>
-        ${course.cancelled ? "<em>ANNULÉ</em>" : ""}
-        ${role === "delegate" ? `<button class="edit-course" onclick="editCourse('${course.id}')">Modifier</button>` : ""}
-      `;
-      col.appendChild(card);
+    document.getElementById("logoutButton").addEventListener("click", () => {
+      localStorage.removeItem("classe53_student_name");
+      document.getElementById("app").classList.add("hidden");
+      document.getElementById("welcomeScreen").classList.remove("hidden");
+      document.getElementById("studentName").value = "";
     });
-}
 
-function startSelection(e) {
-  if (role !== "delegate") return;
-  const cell = e.currentTarget;
-  dragging = true;
-  selection = {
-    day: cell.dataset.day,
-    start: Number(cell.dataset.hour),
-    end: Number(cell.dataset.hour) + 1
-  };
-  document.querySelectorAll(".hour-cell").forEach(x => x.classList.remove("selected"));
-  cell.classList.add("selected");
-  cell.setPointerCapture?.(e.pointerId);
-}
-function extendSelection(e) {
-  if (!dragging || !selection) return;
-  const cell = e.currentTarget;
-  if (cell.dataset.day !== selection.day) return;
-  const hour = Number(cell.dataset.hour);
-  const first = Math.min(selection.start, hour);
-  const last = Math.max(selection.start, hour);
-  selection.start = first;
-  selection.end = last + 1;
-  document.querySelectorAll(".hour-cell").forEach(x => {
-    const h = Number(x.dataset.hour);
-    x.classList.toggle("selected",
-      x.dataset.day === selection.day && h >= first && h <= last);
-  });
-}
-document.addEventListener("pointerup", () => {
-  if (!dragging) return;
-  dragging = false;
-  if (selection && role === "delegate") openCourseForm();
-});
+    function renderTimetable() {
+      const body = document.getElementById("timetableBody");
+      body.innerHTML = "";
 
-function openCourseForm(course=null) {
-  editingId = course ? course.id : null;
-  const selected = course || selection;
-  if (!selected) return;
-  const start = course ? course.start : selected.start;
-  const end = course ? course.end : selected.end;
-  document.getElementById("courseFormArea").innerHTML = `
-    <form id="courseEditor" class="course-editor">
-      <label>Matière</label>
-      <input id="fSubject" required maxlength="60" value="${safe(course?.subject || "")}" placeholder="Ex. : Mathématiques">
-      <label>Professeur</label>
-      <input id="fTeacher" value="${safe(course?.teacher || "")}" placeholder="Nom du professeur">
-      <label>Salle</label>
-      <input id="fRoom" value="${safe(course?.room || "")}" placeholder="Ex. : Salle 12">
-      <div class="two-fields">
-        <div><label>Jour</label><select id="fDay">${days.map(d => `<option ${d===selected.day?"selected":""}>${d}</option>`).join("")}</select></div>
-        <div><label>Semaine</label><select id="fWeek">${state.weeks.map(w => `<option value="${safe(w)}" ${(course?.week || state.week)===w?"selected":""}>Semaine ${safe(w)}</option>`).join("")}<option value="ALL" ${course?.week==="ALL"?"selected":""}>Toutes les semaines</option></select></div>
-        <div><label>Début</label><select id="fStart">${hours.map(h => `<option value="${h}" ${h===Number(start)?"selected":""}>${h}:00</option>`).join("")}</select></div>
-        <div><label>Fin</label><select id="fEnd">${hours.map(h => h>Number(start) ? `<option value="${h+1}" ${h+1===Number(end)?"selected":""}>${h+1}:00</option>` : "").join("")}<option value="17" ${Number(end)===17?"selected":""}>17:00</option></select></div>
-      </div>
-      <label>Couleur du cours</label>
-      <input id="fColor" type="color" value="${safe(course?.color || "#7185ed")}">
-      <div class="form-actions">
-        <button type="submit">${course ? "Enregistrer" : "Créer le cours"}</button>
-        <button type="button" class="secondary" onclick="closeCourseForm()">Fermer</button>
-        ${course ? `<button type="button" class="danger" onclick="deleteCourse('${course.id}')">Supprimer</button>` : ""}
-      </div>
-    </form>
-  `;
-  document.getElementById("courseEditor").addEventListener("submit", saveCourse);
-  document.getElementById("courseFormArea").scrollIntoView({behavior:"smooth",block:"center"});
-}
-function closeCourseForm() {
-  selection = null;
-  editingId = null;
-  document.getElementById("courseFormArea").innerHTML = '<p class="empty">Sélectionne une plage horaire dans l’emploi du temps.</p>';
-  document.querySelectorAll(".hour-cell").forEach(x => x.classList.remove("selected"));
-}
-function saveCourse(e) {
-  e.preventDefault();
-  const start = Number(document.getElementById("fStart").value);
-  const end = Number(document.getElementById("fEnd").value);
-  if (end <= start) return toast("Horaire incorrect");
-  const course = {
-    id: editingId || id(),
-    subject: document.getElementById("fSubject").value.trim(),
-    teacher: document.getElementById("fTeacher").value.trim(),
-    room: document.getElementById("fRoom").value.trim(),
-    day: document.getElementById("fDay").value,
-    week: document.getElementById("fWeek").value,
-    start, end,
-    color: document.getElementById("fColor").value,
-    cancelled: false
-  };
-  const conflict = state.courses.some(c =>
-    c.id !== editingId && c.day === course.day &&
-    (c.week === "ALL" || course.week === "ALL" || c.week === course.week) &&
-    start < c.end && end > c.start
-  );
-  if (conflict && !confirm("Ce cours chevauche un autre cours. Continuer ?")) return;
-  if (editingId) {
-    const i = state.courses.findIndex(c => c.id === editingId);
-    if (i >= 0) state.courses[i] = course;
-  } else state.courses.push(course);
-  save();
-  closeCourseForm();
-  render();
-  toast(editingId ? "Cours modifié" : "Cours créé", course.subject);
-}
-function editCourse(courseId) {
-  const course = state.courses.find(c => c.id === courseId);
-  if (course) openCourseForm(course);
-}
-function deleteCourse(courseId) {
-  if (!confirm("Supprimer définitivement ce cours ?")) return;
-  state.courses = state.courses.filter(c => c.id !== courseId);
-  save(); closeCourseForm(); render(); toast("Cours supprimé");
-}
-function renderCourses() {
-  const box = document.getElementById("courseList");
-  box.innerHTML = state.courses.length ? state.courses.map(c => `
-    <div class="list-row">
-      <span><b>${safe(c.subject)}</b><small>${safe(c.day)} · ${c.start} h–${c.end} h · Semaine ${safe(c.week)}</small></span>
-      <span class="row-buttons">
-        <button onclick="editCourse('${c.id}')">Modifier</button>
-        <button class="secondary" onclick="toggleCancel('${c.id}')">${c.cancelled?"Rétablir":"Annuler"}</button>
-      </span>
-    </div>`).join("") : '<p class="empty">Aucun cours enregistré.</p>';
-}
-function toggleCancel(courseId) {
-  const c = state.courses.find(x => x.id === courseId);
-  if (c) c.cancelled = !c.cancelled;
-  save(); render();
-}
-function changeWeek() {
-  state.week = document.getElementById("adminWeek").value;
-  save(); render(); toast("Semaine mise à jour", "Semaine " + state.week);
-}
-function addWeek() {
-  const input = document.getElementById("newWeek");
-  const w = input.value.trim().replace(/^semaine\s+/i,"");
-  if (!w) return;
-  if (state.weeks.some(x => x.toLowerCase() === w.toLowerCase())) return toast("Cette semaine existe déjà");
-  state.weeks.push(w);
-  input.value = "";
-  save(); renderWeeks();
-  toast("Semaine ajoutée", "Semaine " + w);
-}
-function renderWeeks() {
-  document.getElementById("adminWeek").innerHTML = state.weeks.map(w =>
-    `<option value="${safe(w)}" ${w===state.week?"selected":""}>Semaine ${safe(w)}</option>`
-  ).join("");
-  document.getElementById("weekManagement").innerHTML = state.weeks.map(w =>
-    `<span class="week-chip">Semaine ${safe(w)} <button onclick="removeWeek('${safe(w)}')">×</button></span>`
-  ).join("");
-}
-function removeWeek(w) {
-  if (state.weeks.length <= 1) return toast("Il faut conserver au moins une semaine");
-  if (!confirm("Supprimer la semaine " + w + " ?")) return;
-  state.weeks = state.weeks.filter(x => x !== w);
-  if (state.week === w) state.week = state.weeks[0];
-  save(); render();
-}
-document.getElementById("announcementForm").addEventListener("submit", e => {
-  e.preventDefault();
-  state.announcements.unshift({
-    id:id(),
-    title:document.getElementById("announcementTitle").value,
-    body:document.getElementById("announcementBody").value,
-    author:username,
-    date:new Date().toLocaleString("fr-FR")
-  });
-  e.target.reset(); save(); renderAnnouncements(); toast("Annonce publiée");
-});
-function renderAnnouncements() {
-  document.getElementById("announcementList").innerHTML = state.announcements.map(a =>
-    `<article class="announcement"><b>${safe(a.title)}</b><p>${safe(a.body)}</p><small>Publié par ${safe(a.author)} · ${safe(a.date)}</small></article>`
-  ).join("");
-  document.getElementById("noAnnouncements").hidden = state.announcements.length > 0;
-}
-document.getElementById("messageForm").addEventListener("submit", e => {
-  e.preventDefault();
-  const body = document.getElementById("messageText").value.trim();
-  if (!body) return;
-  const target = document.getElementById("messageTarget").value;
-  if (role === "delegate" && target === "delegate") return toast("Choisis un autre destinataire");
-  state.messages.push({id:id(), sender:username, role, target, body, date:new Date().toLocaleString("fr-FR")});
-  e.target.reset(); save(); renderMessages();
-  toast("Message envoyé");
-});
-function renderMessages() {
-  const visible = state.messages.filter(m =>
-    m.target === "class" || role === "delegate" || m.sender === username
-  );
-  document.getElementById("messageList").innerHTML = visible.map(m =>
-    `<article class="message"><b>${safe(m.sender)}</b><small>${safe(m.date)} · ${m.target==="class"?"Toute la classe":"Au délégué"}</small><p>${safe(m.body)}</p></article>`
-  ).join("");
-  document.getElementById("noMessages").hidden = visible.length > 0;
-}
+      periods.forEach((period, index) => {
+        if (index === 4) {
+          const lunchRow = document.createElement("tr");
+          lunchRow.className = "lunch-row";
+          lunchRow.innerHTML = `
+            <td class="lunch-time">12:00 – 13:00</td>
+            <td colspan="5"><div class="lunch-content">☀ &nbsp; PAUSE DÉJEUNER</div></td>
+          `;
+          body.appendChild(lunchRow);
+        }
 
-load();
-</script>
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="time-cell">
+            <strong>${period.label}</strong>
+            <span>${period.end}</span>
+          </td>
+          ${days.map(() => `<td class="empty-slot"><div class="slot-placeholder"></div></td>`).join("")}
+        `;
+        body.appendChild(row);
+      });
+    }
+
+    document.querySelectorAll(".nav-link").forEach(button => {
+      button.addEventListener("click", () => {
+        const page = button.dataset.page;
+        document.querySelectorAll(".nav-link").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+
+        document.querySelectorAll(".page-section").forEach(section => section.classList.add("hidden"));
+        document.getElementById(page + "Page").classList.remove("hidden");
+
+        const titles = {
+          schedule: "Emploi du temps",
+          news: "Informations",
+          messages: "Discussions"
+        };
+        document.getElementById("pageHeading").textContent = titles[page];
+
+        if (page === "messages") renderMessages();
+      });
+    });
+
+    document.querySelectorAll(".conversation-tab").forEach(button => {
+      button.addEventListener("click", () => {
+        currentConversation = button.dataset.conversation;
+        document.querySelectorAll(".conversation-tab").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+
+        const isClass = currentConversation === "class";
+        document.getElementById("conversationTitle").textContent = isClass
+          ? "Toute la classe" : "Le délégué – Ziyad";
+        document.getElementById("conversationDescription").textContent = isClass
+          ? "Discussion visible par les membres de la classe"
+          : "Espace de message privé destiné au délégué";
+
+        renderMessages();
+      });
+    });
+
+    function renderMessages() {
+      const list = document.getElementById("messageList");
+      const messages = data.messages[currentConversation] || [];
+      list.innerHTML = "";
+
+      if (!messages.length) {
+        list.innerHTML = `
+          <div class="empty-messages">
+            <div class="empty-icon">✉</div>
+            <strong>La discussion est vide</strong>
+            <span>Envoie le premier message !</span>
+          </div>`;
+        return;
+      }
+
+      messages.forEach(message => {
+        const item = document.createElement("div");
+        item.className = "message-bubble" + (message.author === student ? " own-message" : "");
+        const author = document.createElement("strong");
+        author.textContent = message.author;
+        const content = document.createElement("p");
+        content.textContent = message.text;
+        const time = document.createElement("span");
+        time.textContent = message.time;
+        item.append(author, content, time);
+        list.appendChild(item);
+      });
+
+      list.scrollTop = list.scrollHeight;
+    }
+
+    document.getElementById("messageForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      data.messages[currentConversation].push({
+        author: student,
+        text,
+        time: new Date().toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      });
+
+      saveData();
+      input.value = "";
+      renderMessages();
+      showToast("Message enregistré sur cet appareil");
+    });
+
+    document.getElementById("footerYear").textContent = new Date().getFullYear();
+
+    renderTimetable();
+    renderMessages();
+  </script>
 </body>
 </html>
