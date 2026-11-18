@@ -2,13 +2,7 @@
 const SUPABASE_URL = "https://drsiluusqoyndlcglduv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_-hO6YX_UrreBu38ZyKwvJA_2IS-DhDH";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-const FUNCTION_URL = `${SUPABASE_URL}/functions/v1/classe-5e3-auth`;
-
+let supabaseClient = null;
 let currentInvitation = null;
 
 function showPage(page) {
@@ -19,41 +13,61 @@ function showPage(page) {
 }
 
 function showStatus(message) {
-  document.getElementById("statusMessage").textContent = message || "";
+  const element = document.getElementById("statusMessage");
+  if (element) element.textContent = message || "";
 }
 
 function showError(error) {
   showStatus(error.message || "Une erreur est survenue.");
 }
 
-async function callAuthFunction(action, values = {}) {
-  const { data: sessionData } = await supabaseClient.auth.getSession();
-  const token = sessionData.session?.access_token;
+// Navigation : fonctionne même si Supabase ne répond pas.
+document.querySelectorAll("[data-go]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.go));
+});
 
-  const response = await fetch(FUNCTION_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": SUPABASE_KEY,
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    },
-    body: JSON.stringify({ action, ...values })
-  });
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.error || "Erreur Supabase.");
+function initSupabase() {
+  if (!window.supabase) {
+    showStatus("Connexion Supabase impossible : vérifie ta connexion Internet.");
+    return false;
   }
 
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  return true;
+}
+
+async function callAuthFunction(action, values = {}) {
+  if (!supabaseClient) throw new Error("Supabase n'est pas connecté.");
+
+  const { data } = await supabaseClient.auth.getSession();
+  const token = data.session?.access_token;
+
+  const response = await fetch(
+    `${SUPABASE_URL}/functions/v1/classe-5e3-auth`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ action, ...values })
+    }
+  );
+
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Erreur Supabase.");
   return result;
 }
 
 async function login(username, password) {
-  const normalized = username.trim().toLowerCase();
+  if (!supabaseClient) throw new Error("Supabase n'est pas connecté.");
 
-  // Le compte délégué a été créé avec son adresse e-mail personnelle.
-  // Les comptes élèves utilisent l'adresse technique créée à l'inscription.
+  const normalized = username.trim().toLowerCase();
   const email = normalized === "ziyad"
     ? "hamiedziyad@gmail.com"
     : `${normalized}@classe5e3.invalid`;
@@ -73,22 +87,19 @@ async function login(username, password) {
 
   if (profileError) {
     await supabaseClient.auth.signOut();
-    throw new Error("Profil introuvable. Vérifie le compte dans Supabase.");
+    throw profileError;
   }
 
   return profile;
 }
 
 async function logout() {
-  await supabaseClient.auth.signOut();
+  if (supabaseClient) await supabaseClient.auth.signOut();
   currentInvitation = null;
   showPage("home");
 }
 
-document.querySelectorAll("[data-go]").forEach(button => {
-  button.addEventListener("click", () => showPage(button.dataset.go));
-});
-
+// Connexion élève
 document.getElementById("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
   showStatus("");
@@ -111,6 +122,7 @@ document.getElementById("loginForm").addEventListener("submit", async event => {
   }
 });
 
+// Connexion délégué
 document.getElementById("delegateLoginForm").addEventListener("submit", async event => {
   event.preventDefault();
   showStatus("");
@@ -132,11 +144,11 @@ document.getElementById("delegateLoginForm").addEventListener("submit", async ev
   }
 });
 
+// Vérification du code d'invitation
 document.getElementById("verifyCode").addEventListener("click", async () => {
   showStatus("");
   currentInvitation = null;
   document.getElementById("signupFields").hidden = true;
-  document.getElementById("welcomeName").textContent = "";
 
   try {
     const code = document.getElementById("inviteCode").value.trim();
@@ -151,9 +163,9 @@ document.getElementById("verifyCode").addEventListener("click", async () => {
   }
 });
 
+// Création du compte élève
 document.getElementById("signupForm").addEventListener("submit", async event => {
   event.preventDefault();
-  showStatus("");
 
   if (!currentInvitation) {
     showStatus("Vérifie d'abord ton code d'invitation.");
@@ -168,7 +180,7 @@ document.getElementById("signupForm").addEventListener("submit", async event => 
       reservationToken: currentInvitation.reservationToken
     });
 
-    alert(result.message + " Tu peux maintenant te connecter.");
+    alert(result.message || "Compte créé ! Tu peux maintenant te connecter.");
     currentInvitation = null;
     event.target.reset();
     document.getElementById("signupFields").hidden = true;
@@ -178,9 +190,9 @@ document.getElementById("signupForm").addEventListener("submit", async event => 
   }
 });
 
+// Génération d'une invitation
 document.getElementById("invitationForm").addEventListener("submit", async event => {
   event.preventDefault();
-  showStatus("");
 
   try {
     const firstName = document.getElementById("studentFirstName").value.trim();
@@ -200,7 +212,10 @@ document.getElementById("invitationForm").addEventListener("submit", async event
 document.getElementById("studentLogout").addEventListener("click", logout);
 document.getElementById("delegateLogout").addEventListener("click", logout);
 
+// Restauration de la session
 async function restoreSession() {
+  if (!supabaseClient) return;
+
   const { data } = await supabaseClient.auth.getSession();
   if (!data.session) return;
 
@@ -224,4 +239,5 @@ async function restoreSession() {
   }
 }
 
+initSupabase();
 restoreSession().catch(showError);
