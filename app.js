@@ -9,6 +9,10 @@ const SUPABASE_KEY = "sb_publishable_-hO6YX_UrreBu38ZyKwvJA_2IS-DhDH";
 let supabaseClient = null;
 let currentInvitation = null;
 let currentProfile = null;
+let currentUserId = null;
+
+let notificationChannel = null;
+let notificationItems = [];
 
 /* =========================================
    MESSAGES
@@ -109,6 +113,221 @@ async function callAuthFunction(action, values = {}) {
 }
 
 /* =========================================
+   NOTIFICATIONS — AFFICHAGE
+========================================= */
+
+function renderNotifications() {
+  const unreadCount = notificationItems.filter(
+    item => !item.read_at
+  ).length;
+
+  document.querySelectorAll("[data-notification-count]").forEach(badge => {
+    badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+    badge.hidden = unreadCount === 0;
+  });
+
+  document.querySelectorAll("[data-notification-list]").forEach(list => {
+    list.replaceChildren();
+
+    if (notificationItems.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "notification-empty";
+      empty.textContent = "Tu n'as pas encore de notifications.";
+      list.appendChild(empty);
+      return;
+    }
+
+    notificationItems.forEach(item => {
+      const article = document.createElement("article");
+      article.className = "notification-item";
+
+      if (!item.read_at) {
+        article.classList.add("unread");
+      }
+
+      const title = document.createElement("strong");
+      title.textContent = item.title || "Notification";
+
+      const body = document.createElement("p");
+      body.textContent = item.body || "";
+
+      const date = document.createElement("small");
+      date.textContent = formatNotificationDate(item.created_at);
+
+      article.appendChild(title);
+
+      if (item.body) {
+        article.appendChild(body);
+      }
+
+      article.appendChild(date);
+
+      if (!item.read_at) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "notification-read-button";
+        button.textContent = "Marquer comme lu";
+
+        button.addEventListener("click", () => {
+          markNotificationAsRead(item.id);
+        });
+
+        article.appendChild(button);
+      } else {
+        const readLabel = document.createElement("small");
+        readLabel.textContent = "Lu";
+        article.appendChild(readLabel);
+      }
+
+      list.appendChild(article);
+    });
+  });
+}
+
+function formatNotificationDate(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+/* =========================================
+   NOTIFICATIONS — CHARGEMENT
+========================================= */
+
+async function loadNotifications() {
+  if (!supabaseClient || !currentUserId) return;
+
+  const { data, error } = await supabaseClient
+    .from("notifications")
+    .select("id, type, title, body, link, created_at, read_at")
+    .eq("user_id", currentUserId)
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (error) {
+    console.error("Chargement des notifications :", error);
+    showStatus("Impossible de charger les notifications.");
+    return;
+  }
+
+  notificationItems = data || [];
+  renderNotifications();
+}
+
+/* =========================================
+   NOTIFICATIONS — TEMPS RÉEL
+========================================= */
+
+async function startNotificationRealtime() {
+  if (!supabaseClient || !currentUserId) return;
+
+  await stopNotificationRealtime();
+
+  await loadNotifications();
+
+  notificationChannel = supabaseClient
+    .channel(`notifications-${currentUserId}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "notifications",
+        filter: `user_id=eq.${currentUserId}`
+      },
+      async () => {
+        await loadNotifications();
+      }
+    )
+    .subscribe(status => {
+      console.log("Notifications Realtime :", status);
+    });
+}
+
+async function stopNotificationRealtime() {
+  if (notificationChannel && supabaseClient) {
+    await supabaseClient.removeChannel(notificationChannel);
+    notificationChannel = null;
+  }
+
+  notificationItems = [];
+  renderNotifications();
+}
+
+/* =========================================
+   NOTIFICATIONS — MARQUER COMME LUE
+========================================= */
+
+async function markNotificationAsRead(notificationId) {
+  if (!supabaseClient || !currentUserId) return;
+
+  const { error } = await supabaseClient
+    .from("notifications")
+    .update({
+      read_at: new Date().toISOString()
+    })
+    .eq("id", notificationId)
+    .eq("user_id", currentUserId);
+
+  if (error) {
+    showError(error);
+    return;
+  }
+
+  notificationItems = notificationItems.map(item => {
+    if (item.id === notificationId) {
+      return {
+        ...item,
+        read_at: new Date().toISOString()
+      };
+    }
+
+    return item;
+  });
+
+  renderNotifications();
+}
+
+/* =========================================
+   NOTIFICATIONS — OUVERTURE DU PANNEAU
+========================================= */
+
+function setupNotificationButtons() {
+  document.querySelectorAll("[data-notification-toggle]").forEach(button => {
+    button.addEventListener("click", () => {
+      const page = button.closest("[data-page]");
+
+      if (!page) return;
+
+      const panel = page.querySelector("[data-notification-panel]");
+
+      if (!panel) return;
+
+      panel.hidden = !panel.hidden;
+    });
+  });
+
+  document.querySelectorAll("[data-notification-close]").forEach(button => {
+    button.addEventListener("click", () => {
+      const panel = button.closest("[data-notification-panel]");
+
+      if (panel) {
+        panel.hidden = true;
+      }
+    });
+  });
+}
+
+/* =========================================
    CONNEXION
 ========================================= */
 
@@ -146,6 +365,7 @@ async function login(username, password) {
   }
 
   currentProfile = profile;
+  currentUserId = data.user.id;
 
   return profile;
 }
@@ -156,6 +376,8 @@ async function login(username, password) {
 
 async function logout() {
   if (supabaseClient) {
+    await stopNotificationRealtime();
+
     const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
@@ -165,6 +387,7 @@ async function logout() {
   }
 
   currentProfile = null;
+  currentUserId = null;
   currentInvitation = null;
 
   showPage("home");
@@ -245,6 +468,8 @@ function setupStudentLogin() {
         document.getElementById("loginPassword").value
       );
 
+      await startNotificationRealtime();
+
       if (profile.role === "delegate") {
         showPage("delegate");
       } else {
@@ -287,12 +512,14 @@ function setupDelegateLogin() {
       if (profile.role !== "delegate") {
         await supabaseClient.auth.signOut();
         currentProfile = null;
+        currentUserId = null;
 
         throw new Error(
           "Ce compte ne possède pas les droits de délégué."
         );
       }
 
+      await startNotificationRealtime();
       showPage("delegate");
     } catch (error) {
       showError(error);
@@ -491,6 +718,9 @@ async function restoreSession() {
   }
 
   currentProfile = profile;
+  currentUserId = data.session.user.id;
+
+  await startNotificationRealtime();
 
   if (profile.role === "delegate") {
     showPage("delegate");
@@ -509,6 +739,7 @@ async function restoreSession() {
 document.addEventListener("DOMContentLoaded", async () => {
   setupNavigation();
   setupAdminTabs();
+  setupNotificationButtons();
 
   setupStudentLogin();
   setupDelegateLogin();
