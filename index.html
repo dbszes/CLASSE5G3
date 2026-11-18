@@ -1,1 +1,294 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon espace 5e 3</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#">
+    <span class="brand-logo">5³</span>
+    <span>MON ESPACE 5e 3
+      <small>Le portail de notre classe</small>
+    </span>
+  </a>
+  <span class="online"><i data-lucide="circle"></i> En ligne</span>
+</header>
+
+<main class="container">
+
+  <section id="welcome" class="welcome">
+    <div class="welcome-card">
+      <span class="eyebrow">BIENVENUE DANS TON ESPACE</span>
+      <h1>La 5e 3,<br><span>tout au même endroit.</span></h1>
+      <p>Retrouve ton emploi du temps, les informations et les discussions de classe.</p>
+
+      <div class="choice-grid">
+        <button class="choice-card" onclick="showLogin('delegate')">
+          <span class="choice-icon purple"><i data-lucide="star"></i></span>
+          <strong>Je suis délégué</strong>
+          <small>Accéder à l'espace délégué</small>
+          <span class="arrow">→</span>
+        </button>
+        <button class="choice-card" onclick="showLogin('student')">
+          <span class="choice-icon blue"><i data-lucide="user-round"></i></span>
+          <strong>Je suis élève</strong>
+          <small>Accéder à l'espace de la classe</small>
+          <span class="arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="login" class="login-card hidden">
+    <button class="back" onclick="goHome()">← Retour</button>
+    <span class="eyebrow">ESPACE DE CLASSE</span>
+    <h1 id="loginTitle">Bienvenue !</h1>
+    <form id="loginForm">
+      <div id="studentFields">
+        <label>Ton prénom
+          <input id="firstName" placeholder="Ex. Lucas">
+        </label>
+        <label>Ton nom <span class="optional">facultatif</span>
+          <input id="lastName" placeholder="Seulement en cas de prénom identique">
+        </label>
+      </div>
+      <div id="delegateFields" class="hidden">
+        <label>Adresse e-mail
+          <input type="email" placeholder="Adresse e-mail">
+        </label>
+        <label>Mot de passe
+          <input type="password" placeholder="Mot de passe">
+        </label>
+      </div>
+      <button class="primary-button" type="submit">Entrer dans la classe</button>
+    </form>
+    <p id="loginError" class="error"></p>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="dashboard-heading">
+      <div>
+        <span class="eyebrow">ESPACE DE CLASSE</span>
+        <h1>Bonjour <span id="helloName">!</span> 👋</h1>
+        <p>Bienvenue dans ton espace de classe.</p>
+      </div>
+      <button class="logout" onclick="logout()">Déconnexion</button>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab active" data-panel="schedule">
+        <i data-lucide="calendar-days"></i> Emploi du temps
+      </button>
+      <button class="tab" data-panel="news">
+        <i data-lucide="megaphone"></i> Informations
+        <span class="counter">2</span>
+      </button>
+      <button class="tab" data-panel="messages">
+        <i data-lucide="messages-square"></i> Discussions
+      </button>
+      <button class="tab hidden" id="adminTab" data-panel="admin">
+        <i data-lucide="settings"></i> Administration
+      </button>
+    </nav>
+
+    <section id="schedule" class="panel">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">ORGANISATION DE LA SEMAINE</span>
+          <h2>Emploi du temps</h2>
+        </div>
+        <div class="week-switch">
+          <button class="week-button active" onclick="changeWeek('A')">Semaine A</button>
+          <button class="week-button" onclick="changeWeek('B')">Semaine B</button>
+        </div>
+      </div>
+      <div id="scheduleGrid" class="schedule-grid"></div>
+    </section>
+
+    <section id="news" class="panel hidden">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">À SAVOIR</span>
+          <h2>Informations de classe</h2>
+        </div>
+      </div>
+      <div class="announcement">
+        <span class="announcement-icon purple"><i data-lucide="megaphone"></i></span>
+        <div>
+          <h3>Bienvenue dans l'espace 5e 3 !</h3>
+          <p>Tu peux retrouver ici toutes les informations importantes communiquées par les délégués.</p>
+          <small>Information de démonstration</small>
+        </div>
+      </div>
+      <div class="announcement">
+        <span class="announcement-icon blue"><i data-lucide="calendar-check"></i></span>
+        <div>
+          <h3>Emploi du temps</h3>
+          <p>Pense à vérifier les semaines A et B pour connaître tes cours.</p>
+          <small>Information de démonstration</small>
+        </div>
+      </div>
+    </section>
+
+    <section id="messages" class="panel hidden">
+      <span class="eyebrow">ÉCHANGER</span>
+      <h2>Discussions</h2>
+      <div class="chat-demo">
+        <i data-lucide="messages-square"></i>
+        <h3>Bienvenue dans les discussions !</h3>
+        <p>La messagerie sera connectée à la base de données dans la prochaine étape.</p>
+      </div>
+    </section>
+
+    <section id="admin" class="panel hidden">
+      <span class="eyebrow">GESTION DE LA CLASSE</span>
+      <h2>Administration</h2>
+      <div class="admin-card">
+        <h3>Ajouter un cours</h3>
+        <form id="addLessonForm">
+          <label>Matière<input id="subject" required placeholder="Mathématiques"></label>
+          <label>Jour
+            <select id="day">
+              <option value="1">Lundi</option>
+              <option value="2">Mardi</option>
+              <option value="3">Mercredi</option>
+              <option value="4">Jeudi</option>
+              <option value="5">Vendredi</option>
+            </select>
+          </label>
+          <label>Heure
+            <select id="hour">
+              <option>08:00</option><option>09:00</option>
+              <option>10:00</option><option>11:00</option>
+              <option>13:00</option><option>14:00</option>
+              <option>15:00</option><option>16:00</option>
+            </select>
+          </label>
+          <label>Semaine
+            <select id="week"><option>A</option><option>B</option><option>AB</option></select>
+          </label>
+          <button class="primary-button">Ajouter le cours</button>
+        </form>
+      </div>
+    </section>
+
+  </section>
+</main>
+
+<footer>Mon espace 5e 3 · Fait pour notre classe</footer>
+
+<script>
+let currentRole = "student";
+let currentWeek = "A";
+
+const demoLessons = [
+  {day:1,time:"08:00",subject:"Mathématiques",teacher:"M. Martin",room:"204",week:"AB",color:"#DCE7FF"},
+  {day:1,time:"09:00",subject:"Français",teacher:"Mme Dupont",room:"105",week:"A",color:"#F0E5FF"},
+  {day:1,time:"10:00",subject:"Anglais",teacher:"Mme Bernard",room:"202",week:"AB",color:"#DDF5EB"},
+  {day:1,time:"11:00",subject:"Histoire-Géo",teacher:"M. Petit",room:"108",week:"AB",color:"#FFECD9"},
+  {day:2,time:"08:00",subject:"SVT",teacher:"Mme Robert",room:"301",week:"AB",color:"#DDF5EB"},
+  {day:2,time:"09:00",subject:"Mathématiques",teacher:"M. Martin",room:"204",week:"AB",color:"#DCE7FF"},
+  {day:3,time:"08:00",subject:"Français",teacher:"Mme Dupont",room:"105",week:"AB",color:"#F0E5FF"},
+  {day:4,time:"10:00",subject:"Anglais",teacher:"Mme Bernard",room:"202",week:"AB",color:"#DDF5EB"},
+  {day:5,time:"13:00",subject:"Technologie",teacher:"M. Leroy",room:"109",week:"AB",color:"#FFECD9"}
+];
+
+function showLogin(role) {
+  currentRole = role;
+  welcome.classList.add("hidden");
+  login.classList.remove("hidden");
+  studentFields.classList.toggle("hidden", role !== "student");
+  delegateFields.classList.toggle("hidden", role !== "delegate");
+  loginTitle.textContent = role === "student" ? "Salut ! 👋" : "Connexion délégué";
+  lucide.createIcons();
+}
+
+function goHome() {
+  login.classList.add("hidden");
+  welcome.classList.remove("hidden");
+}
+
+loginForm.addEventListener("submit", event => {
+  event.preventDefault();
+  const name = firstName.value.trim();
+  if (currentRole === "student" && !name) {
+    loginError.textContent = "Entre ton prénom pour continuer.";
+    return;
+  }
+  if (currentRole === "delegate") {
+    loginError.textContent = "La connexion délégué sera activée avec le serveur.";
+    return;
+  }
+  helloName.textContent = name;
+  login.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+  adminTab.classList.add("hidden");
+  renderSchedule();
+  lucide.createIcons();
+});
+
+function logout() {
+  dashboard.classList.add("hidden");
+  welcome.classList.remove("hidden");
+}
+
+function changeWeek(week) {
+  currentWeek = week;
+  document.querySelectorAll(".week-button").forEach(button =>
+    button.classList.toggle("active", button.textContent.includes(week))
+  );
+  renderSchedule();
+}
+
+function renderSchedule() {
+  const days = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi"];
+  const hours = ["08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00"];
+  let html = `<table class="schedule-table"><thead><tr><th>Heure</th>${days.map(day=>`<th>${day}</th>`).join("")}</tr></thead><tbody>`;
+  hours.forEach(hour => {
+    if(hour === "12:00") {
+      html += `<tr><td class="time-cell">12:00</td><td colspan="5" class="lunch">PAUSE DÉJEUNER · 12 h – 13 h</td></tr>`;
+      return;
+    }
+    html += `<tr><td class="time-cell">${hour}</td>`;
+    days.forEach((day,index) => {
+      const lesson = demoLessons.find(item => item.day === index+1 && item.time === hour && (item.week === currentWeek || item.week === "AB"));
+      html += `<td>${lesson ? `<div class="lesson" style="background:${lesson.color}"><strong>${lesson.subject}</strong><small>${lesson.teacher}</small><small>Salle ${lesson.room}</small></div>` : ""}</td>`;
+    });
+    html += "</tr>";
+  });
+  html += "</tbody></table>";
+  scheduleGrid.innerHTML = html;
+}
+
+document.querySelectorAll(".tab").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+    button.classList.add("active");
+    ["schedule","news","messages","admin"].forEach(id => {
+      document.getElementById(id).classList.toggle("hidden", id !== button.dataset.panel);
+    });
+  });
+});
+
+addLessonForm.addEventListener("submit", event => {
+  event.preventDefault();
+  if(currentRole !== "delegate") return;
+  demoLessons.push({
+    day:Number(day.value),time:hour.value,subject:subject.value,
+    teacher:"Professeur à préciser",room:"À préciser",
+    week:week.value,color:"#DCE7FF"
+  });
+  renderSchedule();
+  subject.value = "";
+});
+
+lucide.createIcons();
+</script>
+</body>
+</html>
