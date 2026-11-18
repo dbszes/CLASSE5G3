@@ -4,201 +4,338 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#17234b">
-  <title>Classe 5e3 — Espace connecté</title>
+  <meta name="theme-color" content="#f5f8ff">
+  <title>Classe 5e3 — Mon espace</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js" defer></script>
 </head>
+
 <body class="app-page">
 
-  <div class="app-layout">
+<div class="app-layout">
 
-    <aside class="app-sidebar">
-      <div class="app-brand">
-        <div class="app-brand-icon">5e3</div>
-        <div>
-          <strong>Classe 5e3</strong>
-          <small>Espace connecté</small>
-        </div>
+  <!-- MENU LATÉRAL -->
+  <aside class="app-sidebar">
+
+    <div class="app-brand">
+      <div class="app-brand-icon">5e3</div>
+      <div>
+        <strong>Classe 5e3</strong>
+        <small>Notre espace scolaire</small>
+      </div>
+    </div>
+
+    <div class="app-user">
+      <div class="app-avatar" id="appAvatar">?</div>
+      <div>
+        <strong id="appUserName">Chargement...</strong>
+        <small id="appUserRole">Membre de la classe</small>
+      </div>
+    </div>
+
+    <nav class="app-navigation">
+
+      <span class="app-nav-label">ESPACE PRINCIPAL</span>
+
+      <button class="app-nav-item active" data-app-section="dashboard">
+        <span>⌂</span>
+        Tableau de bord
+      </button>
+
+      <button class="app-nav-item" data-app-section="timetable">
+        <span>▦</span>
+        Emploi du temps
+      </button>
+
+      <button class="app-nav-item" data-app-section="announcements">
+        <span>◉</span>
+        Annonces
+      </button>
+
+      <button class="app-nav-item" data-app-section="discussions">
+        <span>☷</span>
+        Discussions
+      </button>
+
+      <button class="app-nav-item" data-app-section="messages">
+        <span>✉</span>
+        Messages privés
+      </button>
+
+      <div id="delegateNavigation" hidden>
+        <span class="app-nav-label">ADMINISTRATION</span>
+
+        <button class="app-nav-item" data-app-section="invitations">
+          <span>＋</span>
+          Invitations
+        </button>
+
+        <button class="app-nav-item" data-app-section="teachers">
+          <span>♧</span>
+          Professeurs
+        </button>
+
+        <button class="app-nav-item" data-app-section="weeks">
+          <span>◷</span>
+          Semaines A / B
+        </button>
       </div>
 
-      <div class="app-user">
-        <div class="app-avatar" id="appAvatar">?</div>
-        <div>
-          <strong id="appUserName">Chargement...</strong>
-          <small id="appUserRole">Membre de la classe</small>
-        </div>
+    </nav>
+
+    <div class="app-sidebar-bottom">
+      <div class="app-sidebar-note">
+        <span>💡</span>
+        <p>Ensemble, faisons vivre la 5e3 !</p>
       </div>
-
-      <nav class="app-navigation">
-        <span class="app-nav-label">MENU PRINCIPAL</span>
-        <button class="app-nav-item active" data-app-section="dashboard">
-          <span>⌂</span> Tableau de bord
-        </button>
-        <button class="app-nav-item" data-app-section="timetable">
-          <span>▦</span> Emploi du temps
-        </button>
-        <button class="app-nav-item" data-app-section="announcements">
-          <span>◉</span> Annonces
-        </button>
-        <button class="app-nav-item" data-app-section="discussions">
-          <span>☷</span> Discussions
-        </button>
-        <button class="app-nav-item" data-app-section="messages">
-          <span>✉</span> Messages privés
-        </button>
-
-        <div id="delegateNavigation" hidden>
-          <span class="app-nav-label">ESPACE DÉLÉGUÉ</span>
-          <button class="app-nav-item" data-app-section="invitations">
-            <span>＋</span> Invitations
-          </button>
-          <button class="app-nav-item" data-app-section="teachers">
-            <span>♧</span> Professeurs
-          </button>
-          <button class="app-nav-item" data-app-section="weeks">
-            <span>◷</span> Semaines A / B
-          </button>
-        </div>
-      </nav>
 
       <button class="app-logout" id="appLogout">
-        <span>↪</span> Déconnexion
+        <span>↪</span>
+        Déconnexion
       </button>
-    </aside>
+    </div>
 
-    <main class="app-main">
-      <header class="app-topbar">
+  </aside>
+
+  <!-- CONTENU PRINCIPAL -->
+  <main class="app-main">
+
+    <header class="app-topbar">
+      <div>
+        <p class="app-eyebrow">TON ESPACE SCOLAIRE</p>
+        <h1 id="appPageTitle">Tableau de bord</h1>
+        <p class="app-subtitle">Bienvenue dans ton espace de classe.</p>
+      </div>
+
+      <button
+        class="app-notification-button"
+        id="appNotificationButton"
+        aria-label="Ouvrir les notifications">
+        ♧
+        <span id="appNotificationCount" hidden>0</span>
+      </button>
+    </header>
+
+    <!-- NOTIFICATIONS -->
+    <div class="app-notification-panel" id="appNotificationPanel" hidden>
+      <div class="app-notification-heading">
         <div>
-          <p class="app-eyebrow">BIENVENUE DANS TON ESPACE</p>
-          <h1 id="appPageTitle">Tableau de bord</h1>
-        </div>
-
-        <button class="app-notification-button"
-          id="appNotificationButton" aria-label="Notifications">
-          🔔
-          <span id="appNotificationCount" hidden>0</span>
-        </button>
-      </header>
-
-      <div class="app-notification-panel" id="appNotificationPanel" hidden>
-        <div class="app-notification-heading">
           <strong>Notifications</strong>
-          <button id="appNotificationClose" aria-label="Fermer">×</button>
+          <small>Les dernières nouvelles de ta classe</small>
         </div>
-        <div id="appNotificationList">
-          <p>Aucune notification pour le moment.</p>
+        <button id="appNotificationClose" aria-label="Fermer">×</button>
+      </div>
+
+      <div id="appNotificationList">
+        <p>Aucune notification pour le moment.</p>
+      </div>
+    </div>
+
+    <!-- TABLEAU DE BORD -->
+    <section class="app-section active" id="section-dashboard">
+
+      <div class="app-welcome-card">
+        <div class="app-welcome-content">
+          <span class="app-welcome-tag">BIENVENUE DANS TON ESPACE</span>
+          <h2>La 5e3, tous ensemble !</h2>
+          <p>
+            Retrouve les informations, les actualités et les outils
+            de notre classe au même endroit.
+          </p>
+        </div>
+
+        <div class="app-welcome-decoration">
+          <span>5e3</span>
         </div>
       </div>
 
-      <section class="app-section active" id="section-dashboard">
-        <div class="app-welcome-card">
+      <div class="app-section-heading">
+        <div>
+          <h2>Ton espace de classe</h2>
+          <p>Accède rapidement aux différentes rubriques.</p>
+        </div>
+      </div>
+
+      <div class="app-stat-grid">
+
+        <article class="app-stat-card">
+          <div class="app-card-icon blue">▦</div>
+          <h3>Emploi du temps</h3>
+          <p>Consulte les cours et les horaires de la semaine.</p>
+          <button data-app-section="timetable">
+            Consulter <span>→</span>
+          </button>
+        </article>
+
+        <article class="app-stat-card">
+          <div class="app-card-icon violet">◉</div>
+          <h3>Annonces</h3>
+          <p>Retrouve les informations importantes de la classe.</p>
+          <button data-app-section="announcements">
+            Voir les annonces <span>→</span>
+          </button>
+        </article>
+
+        <article class="app-stat-card">
+          <div class="app-card-icon green">☷</div>
+          <h3>Discussions</h3>
+          <p>Échange avec les autres élèves de la 5e3.</p>
+          <button data-app-section="discussions">
+            Participer <span>→</span>
+          </button>
+        </article>
+
+        <article class="app-stat-card">
+          <div class="app-card-icon orange">✉</div>
+          <h3>Messages privés</h3>
+          <p>Envoie un message privé au délégué.</p>
+          <button data-app-section="messages">
+            Envoyer un message <span>→</span>
+          </button>
+        </article>
+
+      </div>
+
+      <div class="app-bottom-note">
+        <span>✦</span>
+        <div>
+          <strong>Un espace pour toute la classe</strong>
+          <p>Les informations de la 5e3 réunies au même endroit.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- EMPLOI DU TEMPS -->
+    <section class="app-section" id="section-timetable">
+      <div class="app-content-card">
+        <div class="app-section-heading">
           <div>
-            <span class="app-welcome-tag">NOTRE CLASSE</span>
-            <h2>Bienvenue dans la 5e3 ! 👋</h2>
-            <p>Retrouve ici toutes les informations de ta classe.</p>
+            <span class="app-card-kicker">ORGANISATION</span>
+            <h2>Emploi du temps</h2>
+            <p>Retrouve les cours de la semaine.</p>
           </div>
-          <div class="app-welcome-decoration">5e3</div>
+          <span class="app-heading-icon">▦</span>
         </div>
 
-        <div class="app-stat-grid">
-          <article class="app-stat-card">
-            <span>📅</span>
-            <strong>Emploi du temps</strong>
-            <p>Consulte tes prochains cours.</p>
-            <button data-app-section="timetable">Voir l'emploi du temps →</button>
-          </article>
-
-          <article class="app-stat-card">
-            <span>📢</span>
-            <strong>Annonces</strong>
-            <p>Les informations importantes de la classe.</p>
-            <button data-app-section="announcements">Voir les annonces →</button>
-          </article>
-
-          <article class="app-stat-card">
-            <span>💬</span>
-            <strong>Discussions</strong>
-            <p>Échange avec les autres élèves.</p>
-            <button data-app-section="discussions">Ouvrir les discussions →</button>
-          </article>
-
-          <article class="app-stat-card">
-            <span>✉️</span>
-            <strong>Messages privés</strong>
-            <p>Contacte le délégué.</p>
-            <button data-app-section="messages">Ouvrir les messages →</button>
-          </article>
+        <div id="appTimetableContent">
+          <p>L'emploi du temps sera affiché ici.</p>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="app-section" id="section-timetable">
-        <div class="app-content-card">
-          <h2>📅 Emploi du temps</h2>
-          <p>Retrouve les cours de la semaine.</p>
-          <div id="appTimetableContent">
-            L'emploi du temps sera affiché ici.
+    <!-- ANNONCES -->
+    <section class="app-section" id="section-announcements">
+      <div class="app-content-card">
+        <div class="app-section-heading">
+          <div>
+            <span class="app-card-kicker">ACTUALITÉS</span>
+            <h2>Annonces de la classe</h2>
+            <p>Les informations importantes de la 5e3.</p>
           </div>
+          <span class="app-heading-icon">◉</span>
         </div>
-      </section>
 
-      <section class="app-section" id="section-announcements">
-        <div class="app-content-card">
-          <h2>📢 Annonces de la classe</h2>
-          <div id="appAnnouncementsContent">
-            Les annonces seront affichées ici.
+        <div id="appAnnouncementsContent">
+          Les annonces seront affichées ici.
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCUSSIONS -->
+    <section class="app-section" id="section-discussions">
+      <div class="app-content-card">
+        <div class="app-section-heading">
+          <div>
+            <span class="app-card-kicker">ÉCHANGES</span>
+            <h2>Discussions générales</h2>
+            <p>Discute avec les élèves de la classe.</p>
           </div>
+          <span class="app-heading-icon">☷</span>
         </div>
-      </section>
 
-      <section class="app-section" id="section-discussions">
-        <div class="app-content-card">
-          <h2>💬 Discussions générales</h2>
-          <div id="appDiscussionsContent">
-            Les discussions de la classe seront affichées ici.
+        <div id="appDiscussionsContent">
+          Les discussions seront affichées ici.
+        </div>
+      </div>
+    </section>
+
+    <!-- MESSAGES PRIVÉS -->
+    <section class="app-section" id="section-messages">
+      <div class="app-content-card">
+        <div class="app-section-heading">
+          <div>
+            <span class="app-card-kicker">MESSAGERIE</span>
+            <h2>Messages privés</h2>
+            <p>Contacte le délégué de la classe.</p>
           </div>
+          <span class="app-heading-icon">✉</span>
         </div>
-      </section>
 
-      <section class="app-section" id="section-messages">
-        <div class="app-content-card">
-          <h2>✉️ Messages privés</h2>
-          <div id="appMessagesContent">
-            Tes messages privés seront affichés ici.
+        <div id="appMessagesContent">
+          Tes messages privés seront affichés ici.
+        </div>
+      </div>
+    </section>
+
+    <!-- INVITATIONS -->
+    <section class="app-section" id="section-invitations">
+      <div class="app-content-card">
+        <div class="app-section-heading">
+          <div>
+            <span class="app-card-kicker">ADMINISTRATION</span>
+            <h2>Invitations</h2>
+            <p>Permets aux nouveaux élèves de rejoindre la 5e3.</p>
           </div>
+          <span class="app-heading-icon">＋</span>
         </div>
-      </section>
 
-      <section class="app-section" id="section-invitations">
-        <div class="app-content-card">
-          <h2>＋ Invitations</h2>
-          <div id="appInvitationsContent">
-            Gestion des codes d'invitation.
+        <div id="appInvitationsContent">
+          Gestion des codes d'invitation.
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFESSEURS -->
+    <section class="app-section" id="section-teachers">
+      <div class="app-content-card">
+        <div class="app-section-heading">
+          <div>
+            <span class="app-card-kicker">ADMINISTRATION</span>
+            <h2>Professeurs</h2>
+            <p>Gère les professeurs de la classe.</p>
           </div>
+          <span class="app-heading-icon">♧</span>
         </div>
-      </section>
 
-      <section class="app-section" id="section-teachers">
-        <div class="app-content-card">
-          <h2>♧ Professeurs</h2>
-          <div id="appTeachersContent">
-            Gestion des professeurs.
+        <div id="appTeachersContent">
+          Gestion des professeurs.
+        </div>
+      </div>
+    </section>
+
+    <!-- SEMAINES -->
+    <section class="app-section" id="section-weeks">
+      <div class="app-content-card">
+        <div class="app-section-heading">
+          <div>
+            <span class="app-card-kicker">ADMINISTRATION</span>
+            <h2>Semaines A / B</h2>
+            <p>Définis la semaine actuellement utilisée.</p>
           </div>
+          <span class="app-heading-icon">◷</span>
         </div>
-      </section>
 
-      <section class="app-section" id="section-weeks">
-        <div class="app-content-card">
-          <h2>◷ Semaines A / B</h2>
-          <div id="appWeeksContent">
-            Gestion de la semaine actuelle.
-          </div>
+        <div id="appWeeksContent">
+          Gestion de la semaine actuelle.
         </div>
-      </section>
+      </div>
+    </section>
 
-    </main>
-  </div>
+  </main>
+
+</div>
 
 </body>
 </html>
