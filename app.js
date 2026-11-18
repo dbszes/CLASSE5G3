@@ -1,156 +1,123 @@
 
-const $ = (id) => document.getElementById(id);
+const SUPABASE_URL = "https://drsiluusqoyndlcglduv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_-hO6YX_UrreBu38ZyKwvJA_2IS-DhDH";
 
-let verifiedStudentName = "";
-let verifiedInviteCode = "";
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-$("year").textContent = new Date().getFullYear();
+const FUNCTION_URL =
+  `${SUPABASE_URL}/functions/v1/classe-5e3-auth`;
 
-function showStatus(message, type = "info") {
-  const box = $("statusMessage");
-  box.textContent = message;
-  box.className = `status-message visible ${type}`;
-}
+async function authFunction(action, data = {}) {
+  const { data: sessionData } =
+    await supabaseClient.auth.getSession();
 
-function clearStatus() {
-  $("statusMessage").textContent = "";
-  $("statusMessage").className = "status-message";
-}
+  const token = sessionData.session?.access_token;
 
-function switchView(view) {
-  clearStatus();
-
-  $("loginForm").classList.toggle("hidden", view !== "login");
-  $("registerForm").classList.toggle("hidden", view !== "register");
-
-  document.querySelectorAll(".mode-tab").forEach(button => {
-    button.classList.toggle("active", button.dataset.view === view);
+  const response = await fetch(FUNCTION_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_KEY,
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ action, ...data })
   });
 
-  if (view === "login") {
-    $("formTitle").textContent = "Content de te revoir.";
-    $("formSubtitle").textContent =
-      "Connecte-toi pour retrouver ton espace de classe.";
-  } else {
-    $("formTitle").textContent = "Bienvenue parmi nous.";
-    $("formSubtitle").textContent =
-      "Utilise le code personnel fourni par Ziyad pour créer ton compte.";
-    resetRegistration();
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Une erreur est survenue.");
   }
+
+  return result;
 }
 
-document.querySelectorAll(".mode-tab").forEach(button => {
-  button.addEventListener("click", () => switchView(button.dataset.view));
-});
-
-function resetRegistration() {
-  verifiedStudentName = "";
-  verifiedInviteCode = "";
-  $("registerStepOne").classList.remove("hidden");
-  $("registerStepTwo").classList.add("hidden");
-  $("stepOneDot").classList.add("active");
-  $("stepTwoDot").classList.remove("active");
-  $("inviteCode").value = "";
-  $("newIdentifier").value = "";
-  $("newPassword").value = "";
-  $("confirmPassword").value = "";
+function showMessage(message) {
+  alert(message);
 }
 
-function showRegistrationStepTwo(name, code) {
-  verifiedStudentName = name;
-  verifiedInviteCode = code;
-
-  $("greetingName").textContent = `Bonjour ${name} !`;
-  $("registerStepOne").classList.add("hidden");
-  $("registerStepTwo").classList.remove("hidden");
-  $("stepOneDot").classList.add("active");
-  $("stepTwoDot").classList.add("active");
-}
-
-// Vérification provisoire : elle sera remplacée par la vérification
-// sécurisée du code dans Supabase.
-$("verifyCodeButton").addEventListener("click", () => {
-  const code = $("inviteCode").value.trim();
-
-  if (!code) {
-    showStatus("Saisis d'abord le code qui t'a été donné par Ziyad.", "error");
-    return;
-  }
-
-  showStatus(
-    "La vérification des codes sera activée lors du branchement à Supabase. Aucun code n'est validé pour le moment.",
-    "info"
-  );
-});
-
-// Connexion : pas de faux accès local.
-// La vérification réelle sera faite par Supabase.
-$("loginForm").addEventListener("submit", event => {
-  event.preventDefault();
-
-  const identifier = $("loginIdentifier").value.trim();
-  const password = $("loginPassword").value;
-
-  if (!identifier || !password) {
-    showStatus("Renseigne ton identifiant et ton mot de passe.", "error");
-    return;
-  }
-
-  showStatus(
-    "La connexion sécurisée sera activée après le branchement à Supabase. Aucun compte n'est encore connecté.",
-    "info"
-  );
-});
-
-// Création du compte après validation du code.
-// La création réelle sera faite côté serveur avec Supabase.
-$("registerForm").addEventListener("submit", event => {
-  event.preventDefault();
-
-  if (!verifiedInviteCode || !verifiedStudentName) {
-    showStatus("Il faut d'abord faire vérifier ton code.", "error");
-    return;
-  }
-
-  const identifier = $("newIdentifier").value.trim();
-  const password = $("newPassword").value;
-  const confirmation = $("confirmPassword").value;
-
-  if (identifier.length < 3) {
-    showStatus("Ton identifiant doit contenir au moins 3 caractères.", "error");
-    return;
-  }
-
-  if (password.length < 8) {
-    showStatus("Ton mot de passe doit contenir au moins 8 caractères.", "error");
-    return;
-  }
-
-  if (password !== confirmation) {
-    showStatus("Les deux mots de passe ne correspondent pas.", "error");
-    return;
-  }
-
-  showStatus(
-    "Le formulaire est prêt. La création sécurisée du compte et la consommation du code seront activées avec Supabase.",
-    "info"
-  );
-});
-
-document.querySelectorAll(".toggle-password").forEach(button => {
-  button.addEventListener("click", () => {
-    const input = $(button.dataset.target);
-    const show = input.type === "password";
-    input.type = show ? "text" : "password";
-    button.textContent = show ? "◎" : "◉";
+function showPage(page) {
+  document.querySelectorAll("[data-page]").forEach(element => {
+    element.hidden = element.dataset.page !== page;
   });
-});
+}
 
-$("delegateButton").addEventListener("click", () => {
-  switchView("login");
-  $("loginIdentifier").focus();
-  showStatus(
-    "Ziyad se connectera avec son identifiant et son mot de passe habituels. Son rôle délégué sera reconnu par Supabase.",
-    "info"
-  );
+async function login(username, password) {
+  const normalized = username.trim().toLowerCase();
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: `${normalized}@classe5e3.invalid`,
+    password
+  });
+
+  if (error) throw error;
+
+  const { data: profile, error: profileError } =
+    await supabaseClient
+      .from("profiles")
+      .select("first_name, username, role")
+      .eq("id", data.user.id)
+      .single();
+
+  if (profileError) throw profileError;
+
+  return profile;
+}
+
+async function verifyInvitation(code) {
+  return await authFunction("verify_code", { code });
+}
+
+async function createStudentAccount(username, password, invitation) {
+  return await authFunction("signup", {
+    username,
+    password,
+    invitationId: invitation.invitationId,
+    reservationToken: invitation.reservationToken
+  });
+}
+
+async function createInvitation(firstName) {
+  return await authFunction("create_invitation", {
+    studentFirstName: firstName
+  });
+}
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  showPage("home");
+}
+
+async function checkExistingSession() {
+  const { data } = await supabaseClient.auth.getSession();
+
+  if (!data.session) return;
+
+  const { data: profile } = await supabaseClient
+    .from("profiles")
+    .select("first_name, username, role")
+    .eq("id", data.session.user.id)
+    .single();
+
+  if (profile) {
+    showMessage(`Bienvenue ${profile.first_name} !`);
+    showPage(profile.role === "delegate" ? "delegate" : "student");
+  }
+}
+
+window.ClassApp = {
+  login,
+  verifyInvitation,
+  createStudentAccount,
+  createInvitation,
+  logout,
+  showPage,
+  checkExistingSession
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  checkExistingSession().catch(console.error);
 });
