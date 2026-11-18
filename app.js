@@ -1,6 +1,6 @@
 
 /* =========================================
-   CLASSE 5e3 — APPLICATION
+   CLASSE 5e3 — APPLICATION COMPLÈTE
 ========================================= */
 
 const SUPABASE_URL = "https://drsiluusqoyndlcglduv.supabase.co";
@@ -14,8 +14,10 @@ let currentUserId = null;
 let notificationChannel = null;
 let notificationItems = [];
 
+const isAppPage = document.body.classList.contains("app-page");
+
 /* =========================================
-   MESSAGES
+   OUTILS GÉNÉRAUX
 ========================================= */
 
 function showStatus(message) {
@@ -31,8 +33,16 @@ function showError(error) {
   showStatus(error?.message || "Une erreur est survenue.");
 }
 
+function redirectToApp() {
+  window.location.href = "app.html";
+}
+
+function redirectToLogin() {
+  window.location.href = "index.html";
+}
+
 /* =========================================
-   NAVIGATION DES PAGES
+   ANCIENNE NAVIGATION DE CONNEXION
 ========================================= */
 
 function showPage(page) {
@@ -67,7 +77,7 @@ function initSupabase() {
 }
 
 /* =========================================
-   APPEL À LA FONCTION D'AUTHENTIFICATION
+   FONCTION D'AUTHENTIFICATION
 ========================================= */
 
 async function callAuthFunction(action, values = {}) {
@@ -113,6 +123,68 @@ async function callAuthFunction(action, values = {}) {
 }
 
 /* =========================================
+   CONNEXION
+========================================= */
+
+async function login(username, password) {
+  if (!supabaseClient) {
+    throw new Error("Supabase n'est pas connecté.");
+  }
+
+  const normalized = username.trim().toLowerCase();
+
+  if (!normalized || !password) {
+    throw new Error("Entre ton identifiant et ton mot de passe.");
+  }
+
+  const email = normalized === "ziyad"
+    ? "hamiedziyad@gmail.com"
+    : `${normalized}@classe5e3.invalid`;
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) throw error;
+
+  const { data: profile, error: profileError } = await supabaseClient
+    .from("profiles")
+    .select("first_name, username, role")
+    .eq("id", data.user.id)
+    .single();
+
+  if (profileError || !profile) {
+    await supabaseClient.auth.signOut();
+    throw profileError || new Error("Profil introuvable.");
+  }
+
+  currentProfile = profile;
+  currentUserId = data.user.id;
+
+  return profile;
+}
+
+/* =========================================
+   NOTIFICATIONS — DATE
+========================================= */
+
+function formatNotificationDate(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+/* =========================================
    NOTIFICATIONS — AFFICHAGE
 ========================================= */
 
@@ -121,12 +193,32 @@ function renderNotifications() {
     item => !item.read_at
   ).length;
 
+  // Compteurs de l'ancien espace
   document.querySelectorAll("[data-notification-count]").forEach(badge => {
     badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
     badge.hidden = unreadCount === 0;
   });
 
-  document.querySelectorAll("[data-notification-list]").forEach(list => {
+  // Compteur du nouvel espace
+  const appBadge = document.getElementById("appNotificationCount");
+
+  if (appBadge) {
+    appBadge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+    appBadge.hidden = unreadCount === 0;
+  }
+
+  // Listes de notifications
+  const lists = [
+    ...document.querySelectorAll("[data-notification-list]")
+  ];
+
+  const appList = document.getElementById("appNotificationList");
+
+  if (appList) {
+    lists.push(appList);
+  }
+
+  lists.forEach(list => {
     list.replaceChildren();
 
     if (notificationItems.length === 0) {
@@ -184,21 +276,6 @@ function renderNotifications() {
   });
 }
 
-function formatNotificationDate(value) {
-  if (!value) return "";
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return "";
-
-  return date.toLocaleString("fr-FR", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}
-
 /* =========================================
    NOTIFICATIONS — CHARGEMENT
 ========================================= */
@@ -215,7 +292,6 @@ async function loadNotifications() {
 
   if (error) {
     console.error("Chargement des notifications :", error);
-    showStatus("Impossible de charger les notifications.");
     return;
   }
 
@@ -270,10 +346,12 @@ async function stopNotificationRealtime() {
 async function markNotificationAsRead(notificationId) {
   if (!supabaseClient || !currentUserId) return;
 
+  const readDate = new Date().toISOString();
+
   const { error } = await supabaseClient
     .from("notifications")
     .update({
-      read_at: new Date().toISOString()
+      read_at: readDate
     })
     .eq("id", notificationId)
     .eq("user_id", currentUserId);
@@ -287,7 +365,7 @@ async function markNotificationAsRead(notificationId) {
     if (item.id === notificationId) {
       return {
         ...item,
-        read_at: new Date().toISOString()
+        read_at: readDate
       };
     }
 
@@ -298,21 +376,18 @@ async function markNotificationAsRead(notificationId) {
 }
 
 /* =========================================
-   NOTIFICATIONS — OUVERTURE DU PANNEAU
+   NOTIFICATIONS — BOUTONS
 ========================================= */
 
 function setupNotificationButtons() {
   document.querySelectorAll("[data-notification-toggle]").forEach(button => {
     button.addEventListener("click", () => {
       const page = button.closest("[data-page]");
+      const panel = page?.querySelector("[data-notification-panel]");
 
-      if (!page) return;
-
-      const panel = page.querySelector("[data-notification-panel]");
-
-      if (!panel) return;
-
-      panel.hidden = !panel.hidden;
+      if (panel) {
+        panel.hidden = !panel.hidden;
+      }
     });
   });
 
@@ -325,49 +400,234 @@ function setupNotificationButtons() {
       }
     });
   });
+
+  const appButton = document.getElementById("appNotificationButton");
+  const appPanel = document.getElementById("appNotificationPanel");
+  const appClose = document.getElementById("appNotificationClose");
+
+  appButton?.addEventListener("click", () => {
+    if (appPanel) {
+      appPanel.hidden = !appPanel.hidden;
+    }
+  });
+
+  appClose?.addEventListener("click", () => {
+    if (appPanel) {
+      appPanel.hidden = true;
+    }
+  });
 }
 
 /* =========================================
-   CONNEXION
+   NOUVEL ESPACE — INFORMATIONS UTILISATEUR
 ========================================= */
 
-async function login(username, password) {
-  if (!supabaseClient) {
-    throw new Error("Supabase n'est pas connecté.");
+function setupAppUser() {
+  if (!isAppPage || !currentProfile) return;
+
+  const name = currentProfile.first_name || currentProfile.username || "Élève";
+
+  const userName = document.getElementById("appUserName");
+  const userRole = document.getElementById("appUserRole");
+  const avatar = document.getElementById("appAvatar");
+  const delegateNavigation = document.getElementById("delegateNavigation");
+
+  if (userName) {
+    userName.textContent = name;
   }
 
-  const normalized = username.trim().toLowerCase();
-
-  if (!normalized || !password) {
-    throw new Error("Entre ton identifiant et ton mot de passe.");
+  if (userRole) {
+    userRole.textContent = currentProfile.role === "delegate"
+      ? "Délégué de classe"
+      : "Élève de la 5e3";
   }
 
-  const email = normalized === "ziyad"
-    ? "hamiedziyad@gmail.com"
-    : `${normalized}@classe5e3.invalid`;
+  if (avatar) {
+    avatar.textContent = name.charAt(0).toUpperCase();
+  }
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
+  if (delegateNavigation) {
+    delegateNavigation.hidden = currentProfile.role !== "delegate";
+  }
+}
+
+/* =========================================
+   NOUVEL ESPACE — NAVIGATION
+========================================= */
+
+function openAppSection(sectionName) {
+  const delegateSections = [
+    "invitations",
+    "teachers",
+    "weeks"
+  ];
+
+  if (
+    delegateSections.includes(sectionName) &&
+    currentProfile?.role !== "delegate"
+  ) {
+    return;
+  }
+
+  const section = document.getElementById(`section-${sectionName}`);
+
+  if (!section) return;
+
+  document.querySelectorAll(".app-section").forEach(item => {
+    item.classList.toggle("active", item.id === `section-${sectionName}`);
   });
 
-  if (error) throw error;
+  document.querySelectorAll("[data-app-section]").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.appSection === sectionName
+    );
+  });
 
-  const { data: profile, error: profileError } = await supabaseClient
-    .from("profiles")
-    .select("first_name, username, role")
-    .eq("id", data.user.id)
-    .single();
+  const titles = {
+    dashboard: "Tableau de bord",
+    timetable: "Emploi du temps",
+    announcements: "Annonces",
+    discussions: "Discussions",
+    messages: "Messages privés",
+    invitations: "Invitations",
+    teachers: "Professeurs",
+    weeks: "Semaines A / B"
+  };
 
-  if (profileError) {
-    await supabaseClient.auth.signOut();
-    throw profileError;
+  const pageTitle = document.getElementById("appPageTitle");
+
+  if (pageTitle) {
+    pageTitle.textContent = titles[sectionName] || "Classe 5e3";
   }
 
-  currentProfile = profile;
-  currentUserId = data.user.id;
+  const panel = document.getElementById("appNotificationPanel");
 
-  return profile;
+  if (panel) {
+    panel.hidden = true;
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+function setupAppNavigation() {
+  if (!isAppPage) return;
+
+  document.querySelectorAll("[data-app-section]").forEach(button => {
+    button.addEventListener("click", () => {
+      openAppSection(button.dataset.appSection);
+    });
+  });
+
+  document.getElementById("appLogout")
+    ?.addEventListener("click", logout);
+}
+
+/* =========================================
+   NOUVEL ESPACE — INVITATIONS
+========================================= */
+
+function setupAppInvitations() {
+  if (!isAppPage || currentProfile?.role !== "delegate") return;
+
+  const container = document.getElementById("appInvitationsContent");
+
+  if (!container) return;
+
+  container.replaceChildren();
+
+  const description = document.createElement("p");
+  description.textContent =
+    "Crée un code personnel pour permettre à un nouvel élève de rejoindre la classe.";
+
+  const form = document.createElement("form");
+  form.id = "appInvitationForm";
+
+  const label = document.createElement("label");
+  label.htmlFor = "appStudentFirstName";
+  label.textContent = "Prénom de l'élève";
+
+  const input = document.createElement("input");
+  input.id = "appStudentFirstName";
+  input.type = "text";
+  input.placeholder = "Exemple : Lucas";
+  input.required = true;
+  input.autocomplete = "off";
+
+  const button = document.createElement("button");
+  button.type = "submit";
+  button.className = "app-action-button";
+  button.textContent = "Créer le code d'invitation";
+
+  const output = document.createElement("div");
+  output.id = "appGeneratedCode";
+  output.hidden = true;
+  output.className = "app-generated-code";
+
+  form.append(label, input, button);
+  container.append(description, form, output);
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (currentProfile?.role !== "delegate") {
+      showError(new Error("Action réservée au délégué."));
+      return;
+    }
+
+    button.disabled = true;
+    output.hidden = true;
+
+    try {
+      const result = await callAuthFunction("create_invitation", {
+        studentFirstName: input.value.trim()
+      });
+
+      output.textContent =
+        `Code de ${result.studentFirstName} : ${result.code}`;
+
+      output.hidden = false;
+
+      const copyButton = document.createElement("button");
+      copyButton.type = "button";
+      copyButton.textContent = "Copier le code";
+
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(result.code);
+          copyButton.textContent = "Code copié !";
+        } catch {
+          copyButton.textContent = "Copie indisponible";
+        }
+      });
+
+      output.appendChild(document.createElement("br"));
+      output.appendChild(copyButton);
+
+      input.value = "";
+    } catch (error) {
+      showError(error);
+    } finally {
+      button.disabled = false;
+    }
+  });
+}
+
+/* =========================================
+   NOUVEL ESPACE — DÉMARRAGE
+========================================= */
+
+function setupConnectedApp() {
+  if (!isAppPage) return;
+
+  setupAppUser();
+  setupAppNavigation();
+  setupAppInvitations();
+
+  openAppSection("dashboard");
 }
 
 /* =========================================
@@ -390,11 +650,11 @@ async function logout() {
   currentUserId = null;
   currentInvitation = null;
 
-  showPage("home");
+  redirectToLogin();
 }
 
 /* =========================================
-   ONGLETS DE L'ADMINISTRATION
+   ANCIENS ONGLETS ADMINISTRATION
 ========================================= */
 
 function setupAdminTabs() {
@@ -463,21 +723,12 @@ function setupStudentLogin() {
     try {
       if (button) button.disabled = true;
 
-      const profile = await login(
+      await login(
         document.getElementById("loginUsername").value,
         document.getElementById("loginPassword").value
       );
 
-      await startNotificationRealtime();
-
-      if (profile.role === "delegate") {
-        showPage("delegate");
-      } else {
-        document.getElementById("studentWelcome").textContent =
-          `Bienvenue ${profile.first_name} !`;
-
-        showPage("student");
-      }
+      redirectToApp();
     } catch (error) {
       showError(error);
     } finally {
@@ -511,6 +762,7 @@ function setupDelegateLogin() {
 
       if (profile.role !== "delegate") {
         await supabaseClient.auth.signOut();
+
         currentProfile = null;
         currentUserId = null;
 
@@ -519,8 +771,7 @@ function setupDelegateLogin() {
         );
       }
 
-      await startNotificationRealtime();
-      showPage("delegate");
+      redirectToApp();
     } catch (error) {
       showError(error);
     } finally {
@@ -545,6 +796,8 @@ function setupInvitationVerification() {
     const fields = document.getElementById("signupFields");
     const welcome = document.getElementById("welcomeName");
     const codeInput = document.getElementById("inviteCode");
+
+    if (!fields || !welcome || !codeInput) return;
 
     fields.hidden = true;
     welcome.textContent = "";
@@ -630,7 +883,7 @@ function setupSignup() {
 }
 
 /* =========================================
-   CRÉATION DES INVITATIONS PAR ZIYAD
+   CRÉATION DES INVITATIONS — ANCIEN ESPACE
 ========================================= */
 
 function setupInvitationCreation() {
@@ -662,9 +915,11 @@ function setupInvitationCreation() {
 
       const output = document.getElementById("generatedCode");
 
-      output.hidden = false;
-      output.textContent =
-        `Code de ${result.studentFirstName} : ${result.code}`;
+      if (output) {
+        output.hidden = false;
+        output.textContent =
+          `Code de ${result.studentFirstName} : ${result.code}`;
+      }
 
       form.reset();
     } catch (error) {
@@ -676,7 +931,7 @@ function setupInvitationCreation() {
 }
 
 /* =========================================
-   NAVIGATION GÉNÉRALE
+   NAVIGATION — ANCIEN ESPACE
 ========================================= */
 
 function setupNavigation() {
@@ -704,7 +959,13 @@ async function restoreSession() {
 
   if (error) throw error;
 
-  if (!data.session) return;
+  if (!data.session) {
+    if (isAppPage) {
+      redirectToLogin();
+    }
+
+    return;
+  }
 
   const { data: profile, error: profileError } = await supabaseClient
     .from("profiles")
@@ -714,29 +975,33 @@ async function restoreSession() {
 
   if (profileError || !profile) {
     await supabaseClient.auth.signOut();
+
+    if (isAppPage) {
+      redirectToLogin();
+    }
+
     return;
   }
 
   currentProfile = profile;
   currentUserId = data.session.user.id;
 
-  await startNotificationRealtime();
-
-  if (profile.role === "delegate") {
-    showPage("delegate");
+  if (isAppPage) {
+    setupConnectedApp();
+    setupNotificationButtons();
+    await startNotificationRealtime();
   } else {
-    document.getElementById("studentWelcome").textContent =
-      `Bienvenue ${profile.first_name} !`;
-
-    showPage("student");
+    redirectToApp();
   }
 }
 
 /* =========================================
-   DÉMARRAGE DE L'APPLICATION
+   DÉMARRAGE
 ========================================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
+  if (!initSupabase()) return;
+
   setupNavigation();
   setupAdminTabs();
   setupNotificationButtons();
@@ -747,8 +1012,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupInvitationVerification();
   setupSignup();
   setupInvitationCreation();
-
-  if (!initSupabase()) return;
 
   try {
     await restoreSession();
