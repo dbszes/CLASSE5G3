@@ -38,6 +38,12 @@ body {
   border-radius: 30px;
   background: white;
   box-shadow: 0 30px 90px rgba(31, 43, 91, .14);
+  animation: entrance .7s ease both;
+}
+
+@keyframes entrance {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .hero {
@@ -58,19 +64,15 @@ body {
   align-items: center;
 }
 
-.hero-top {
-  justify-content: space-between;
-}
+.hero-top { justify-content: space-between; }
 
 .logo {
-  font-size: 34px;
+  font-size: 36px;
   font-weight: 900;
   letter-spacing: -2px;
 }
 
-.logo span {
-  color: #b9a7ff;
-}
+.logo span { color: #b9a7ff; }
 
 .school-tag {
   padding: 9px 13px;
@@ -102,9 +104,7 @@ body {
   letter-spacing: -3px;
 }
 
-.hero h1 span {
-  color: #bcaaff;
-}
+.hero h1 span { color: #bcaaff; }
 
 .hero-description {
   max-width: 360px;
@@ -121,24 +121,20 @@ body {
   background: #bcaaff;
 }
 
-.hero-bottom {
-  gap: 15px;
-}
+.hero-bottom { gap: 15px; }
 
 .hero-icon {
-  width: 42px;
-  height: 42px;
+  width: 45px;
+  height: 45px;
   display: grid;
   place-items: center;
-  border-radius: 13px;
-  background: rgba(255,255,255,.13);
+  border-radius: 14px;
+  background: rgba(255,255,255,.14);
   color: #d6caff;
   font-size: 23px;
 }
 
-.hero-bottom strong {
-  font-size: 13px;
-}
+.hero-bottom strong { font-size: 13px; }
 
 .hero-bottom p {
   margin-top: 5px;
@@ -211,19 +207,19 @@ body {
 
 .screen {
   width: 100%;
-  animation: appear .25s ease;
+  animation: appear .3s ease;
 }
 
 @keyframes appear {
-  from { opacity: 0; transform: translateY(7px); }
+  from { opacity: 0; transform: translateY(9px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .screen h2 {
   margin: 13px 0 9px;
   color: var(--navy);
-  font-size: 31px;
-  letter-spacing: -1.2px;
+  font-size: 32px;
+  letter-spacing: -1.3px;
 }
 
 .muted {
@@ -235,33 +231,35 @@ body {
 
 .choice-card {
   width: 100%;
-  min-height: 76px;
-  margin: 8px 0;
-  padding: 13px 15px;
+  min-height: 78px;
+  margin: 9px 0;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
   gap: 14px;
   border: 1px solid var(--border);
-  border-radius: 15px;
+  border-radius: 17px;
   background: white;
   text-align: left;
   cursor: pointer;
-  transition: .2s ease;
+  transition: border-color .25s, transform .25s, box-shadow .25s;
 }
 
 .choice-card:hover {
-  border-color: #cbd4ff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(44, 63, 135, .07);
+  border-color: #c2ccff;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(44, 63, 135, .09);
 }
 
+.choice-card:active { transform: scale(.985); }
+
 .choice-icon {
-  width: 43px;
-  height: 43px;
+  width: 45px;
+  height: 45px;
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  border-radius: 13px;
+  border-radius: 14px;
   font-size: 22px;
   font-weight: 700;
 }
@@ -290,7 +288,10 @@ body {
   margin-left: auto;
   color: #a4abc0;
   font-size: 25px;
+  transition: transform .2s;
 }
+
+.choice-card:hover .choice-arrow { transform: translateX(4px); }
 
 .panel-foot {
   margin-top: 23px;
@@ -302,12 +303,20 @@ body {
 .back-button {
   align-self: flex-start;
   margin-bottom: 30px;
-  padding: 0;
-  border: 0;
-  background: transparent;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: white;
   color: #777f99;
   font-size: 12px;
   cursor: pointer;
+  transition: .2s;
+}
+
+.back-button:hover {
+  color: var(--blue);
+  border-color: #cbd4ff;
+  background: #f8f9ff;
 }
 
 label {
@@ -320,50 +329,52 @@ label {
 
 input {
   width: 100%;
-  height: 48px;
+  height: 49px;
   padding: 0 15px;
   border: 1px solid #e5e8f1;
-  border-radius: 11px;
+  border-radius: 12px;
   outline: none;
   background: #fafbfe;
   color: var(--text);
   font: inherit;
   font-size: 13px;
-  transition: .2s;
+  transition: border-color .2s, box-shadow .2s, background .2s;
 }
 
 input:focus {
   border-color: #8194ef;
-  box-shadow: 0 0 0 3px rgba(82,111,232,.1);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(82,111,232,.11);
 }
 
 .primary-button {
   width: 100%;
-  min-height: 49px;
+  min-height: 50px;
   margin-top: 25px;
   padding: 0 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border: 0;
-  border-radius: 11px;
+  border-radius: 12px;
   color: white;
   background: linear-gradient(100deg, #4d6be1, #8062dc);
   font-size: 12px;
   font-weight: 750;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(86, 103, 214, .17);
-  transition: .2s;
+  box-shadow: 0 9px 20px rgba(86, 103, 214, .2);
+  transition: transform .2s, box-shadow .2s, filter .2s;
 }
 
 .primary-button:hover {
-  filter: brightness(1.06);
-  transform: translateY(-1px);
+  filter: brightness(1.07);
+  transform: translateY(-2px);
+  box-shadow: 0 13px 25px rgba(86, 103, 214, .25);
 }
 
-.primary-button span {
-  font-size: 19px;
-}
+.primary-button:active { transform: scale(.985); }
+
+.primary-button span { font-size: 19px; }
 
 .success-message {
   margin-top: 13px;
@@ -374,21 +385,26 @@ input:focus {
 
 .dashboard-card {
   margin: 8px 0 20px;
-  padding: 17px;
+  padding: 18px;
   display: flex;
   align-items: center;
   gap: 14px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 15px;
   background: #fafbff;
+  transition: box-shadow .2s;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 8px 22px rgba(44,63,135,.06);
 }
 
 .dashboard-icon {
-  width: 42px;
-  height: 42px;
+  width: 43px;
+  height: 43px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: 13px;
   background: #edf0ff;
   color: #596fe0;
   font-size: 22px;
@@ -417,9 +433,7 @@ input:focus {
   overflow-wrap: anywhere;
 }
 
-.logout-button {
-  margin-top: 25px;
-}
+.logout-button { margin-top: 25px; }
 
 .status-message {
   min-height: 18px;
@@ -429,9 +443,7 @@ input:focus {
   line-height: 1.5;
 }
 
-[hidden] {
-  display: none !important;
-}
+[hidden] { display: none !important; }
 
 @media (max-width: 760px) {
   body {
@@ -451,30 +463,20 @@ input:focus {
     padding: 28px;
   }
 
-  .hero-content {
-    margin: 38px 0 20px;
-  }
+  .hero-content { margin: 38px 0 20px; }
 
-  .hero h1 {
-    font-size: 47px;
-  }
+  .hero h1 { font-size: 47px; }
 
   .hero-description {
     max-width: 300px;
     font-size: 13px;
   }
 
-  .hero-line {
-    margin: 20px 0;
-  }
+  .hero-line { margin: 20px 0; }
 
-  .hero-bottom p {
-    max-width: 240px;
-  }
+  .hero-bottom p { max-width: 240px; }
 
-  .hero-number {
-    font-size: 25px;
-  }
+  .hero-number { font-size: 25px; }
 
   .main-panel {
     min-height: 470px;
@@ -486,7 +488,12 @@ input:focus {
     right: 27px;
   }
 
-  .screen h2 {
-    font-size: 28px;
+  .screen h2 { font-size: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
   }
 }
