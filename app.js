@@ -14,16 +14,11 @@ function showPage(page) {
   document.querySelectorAll("[data-page]").forEach(section => {
     section.hidden = section.dataset.page !== page;
   });
-
   showStatus("");
-
-  if (page === "delegate") {
-    showAdminSection("invitations");
-  }
 }
 
 function showError(error) {
-  showStatus(error?.message || "Une erreur est survenue.");
+  showStatus(error.message || "Une erreur est survenue.");
 }
 
 function initSupabase() {
@@ -36,14 +31,11 @@ function initSupabase() {
     SUPABASE_URL,
     SUPABASE_KEY
   );
-
   return true;
 }
 
 async function callAuthFunction(action, values = {}) {
-  if (!supabaseClient) {
-    throw new Error("Supabase n'est pas connecté.");
-  }
+  if (!supabaseClient) throw new Error("Supabase n'est pas connecté.");
 
   const { data } = await supabaseClient.auth.getSession();
   const token = data.session?.access_token;
@@ -62,21 +54,14 @@ async function callAuthFunction(action, values = {}) {
   );
 
   const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.error || "Erreur Supabase.");
-  }
-
+  if (!response.ok) throw new Error(result.error || "Erreur Supabase.");
   return result;
 }
 
 async function login(username, password) {
-  if (!supabaseClient) {
-    throw new Error("Supabase n'est pas connecté.");
-  }
+  if (!supabaseClient) throw new Error("Supabase n'est pas connecté.");
 
   const normalized = username.trim().toLowerCase();
-
   const email = normalized === "ziyad"
     ? "hamiedziyad@gmail.com"
     : `${normalized}@classe5e3.invalid`;
@@ -103,67 +88,45 @@ async function login(username, password) {
 }
 
 async function logout() {
-  if (supabaseClient) {
-    await supabaseClient.auth.signOut();
-  }
-
+  if (supabaseClient) await supabaseClient.auth.signOut();
   currentInvitation = null;
   showPage("home");
 }
 
-// Navigation entre les rubriques du panneau délégué
-function showAdminSection(sectionName) {
-  const sections = document.querySelectorAll("[data-admin-section]");
+function setupAdminTabs() {
   const tabs = document.querySelectorAll("[data-admin-tab]");
-
-  if (!sections.length) return;
-
-  let sectionExists = false;
-
-  sections.forEach(section => {
-    const isActive = section.dataset.adminSection === sectionName;
-    section.hidden = !isActive;
-
-    if (isActive) sectionExists = true;
-  });
-
-  if (!sectionExists) {
-    sectionName = sections[0].dataset.adminSection;
-
-    sections.forEach(section => {
-      section.hidden = section.dataset.adminSection !== sectionName;
-    });
-  }
+  const sections = document.querySelectorAll("[data-admin-section]");
 
   tabs.forEach(tab => {
-    const isActive = tab.dataset.adminTab === sectionName;
-
-    tab.classList.toggle("active", isActive);
-    tab.setAttribute("aria-selected", isActive ? "true" : "false");
-  });
-
-  showStatus("");
-}
-
-function setupAdminTabs() {
-  document.querySelectorAll("[data-admin-tab]").forEach(tab => {
     tab.addEventListener("click", () => {
-      showAdminSection(tab.dataset.adminTab);
+      const selected = tab.dataset.adminTab;
+
+      tabs.forEach(item => {
+        const active = item === tab;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-selected", String(active));
+      });
+
+      sections.forEach(section => {
+        section.hidden = section.dataset.adminSection !== selected;
+      });
+
+      showStatus("");
     });
   });
 
-  showAdminSection("invitations");
+  if (tabs.length) {
+    tabs[0].click();
+  }
 }
 
 function setupButtons() {
   // Navigation générale
   document.querySelectorAll("[data-go]").forEach(button => {
-    button.addEventListener("click", () => {
-      showPage(button.dataset.go);
-    });
+    button.addEventListener("click", () => showPage(button.dataset.go));
   });
 
-  // Navigation du panneau d'administration
+  // Onglets de l'espace délégué
   setupAdminTabs();
 
   // Connexion élève
@@ -181,7 +144,6 @@ function setupButtons() {
       } else {
         document.getElementById("studentWelcome").textContent =
           `Bienvenue ${profile.first_name} !`;
-
         showPage("student");
       }
     } catch (error) {
@@ -210,19 +172,15 @@ function setupButtons() {
     }
   });
 
-  // Vérification du code d'invitation
+  // Vérifier le code d'invitation
   document.getElementById("verifyCode")?.addEventListener("click", async () => {
     showStatus("");
     currentInvitation = null;
-
     document.getElementById("signupFields").hidden = true;
 
     try {
       const code = document.getElementById("inviteCode").value.trim();
-
-      const result = await callAuthFunction("verify_code", {
-        code
-      });
+      const result = await callAuthFunction("verify_code", { code });
 
       currentInvitation = result;
 
@@ -235,7 +193,7 @@ function setupButtons() {
     }
   });
 
-  // Création du compte élève
+  // Créer un compte élève
   document.getElementById("signupForm")?.addEventListener("submit", async event => {
     event.preventDefault();
 
@@ -256,27 +214,19 @@ function setupButtons() {
 
       currentInvitation = null;
       event.target.reset();
-
       document.getElementById("signupFields").hidden = true;
-
       showPage("login");
     } catch (error) {
       showError(error);
     }
   });
 
-  // Création d'une invitation par Ziyad
+  // Créer une invitation : cette fonction reste disponible pour Ziyad
   document.getElementById("invitationForm")?.addEventListener("submit", async event => {
     event.preventDefault();
 
     try {
-      const firstName = document
-        .getElementById("studentFirstName")
-        .value.trim();
-
-      if (!firstName) {
-        throw new Error("Entre le prénom de l'élève.");
-      }
+      const firstName = document.getElementById("studentFirstName").value.trim();
 
       const result = await callAuthFunction("create_invitation", {
         studentFirstName: firstName
@@ -284,9 +234,11 @@ function setupButtons() {
 
       const output = document.getElementById("generatedCode");
 
-      output.hidden = false;
-      output.textContent =
-        `Code de ${result.studentFirstName} : ${result.code}`;
+      if (output) {
+        output.hidden = false;
+        output.textContent =
+          `Code de ${result.studentFirstName} : ${result.code}`;
+      }
 
       event.target.reset();
     } catch (error) {
@@ -322,13 +274,14 @@ async function restoreSession() {
   } else {
     document.getElementById("studentWelcome").textContent =
       `Bienvenue ${profile.first_name} !`;
-
     showPage("student");
   }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   setupButtons();
-  initSupabase();
-  restoreSession().catch(showError);
+
+  if (initSupabase()) {
+    restoreSession().catch(showError);
+  }
 });
