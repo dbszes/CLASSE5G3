@@ -1,3 +1,4 @@
+
 const SUPABASE_URL = "https://drsiluusqoyndlcglduv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_-hO6YX_UrreBu38ZyKwvJA_2IS-DhDH";
 
@@ -13,11 +14,16 @@ function showPage(page) {
   document.querySelectorAll("[data-page]").forEach(section => {
     section.hidden = section.dataset.page !== page;
   });
+
   showStatus("");
+
+  if (page === "delegate") {
+    showAdminSection("invitations");
+  }
 }
 
 function showError(error) {
-  showStatus(error.message || "Une erreur est survenue.");
+  showStatus(error?.message || "Une erreur est survenue.");
 }
 
 function initSupabase() {
@@ -30,11 +36,14 @@ function initSupabase() {
     SUPABASE_URL,
     SUPABASE_KEY
   );
+
   return true;
 }
 
 async function callAuthFunction(action, values = {}) {
-  if (!supabaseClient) throw new Error("Supabase n'est pas connecté.");
+  if (!supabaseClient) {
+    throw new Error("Supabase n'est pas connecté.");
+  }
 
   const { data } = await supabaseClient.auth.getSession();
   const token = data.session?.access_token;
@@ -53,14 +62,21 @@ async function callAuthFunction(action, values = {}) {
   );
 
   const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Erreur Supabase.");
+
+  if (!response.ok) {
+    throw new Error(result.error || "Erreur Supabase.");
+  }
+
   return result;
 }
 
 async function login(username, password) {
-  if (!supabaseClient) throw new Error("Supabase n'est pas connecté.");
+  if (!supabaseClient) {
+    throw new Error("Supabase n'est pas connecté.");
+  }
 
   const normalized = username.trim().toLowerCase();
+
   const email = normalized === "ziyad"
     ? "hamiedziyad@gmail.com"
     : `${normalized}@classe5e3.invalid`;
@@ -87,20 +103,73 @@ async function login(username, password) {
 }
 
 async function logout() {
-  if (supabaseClient) await supabaseClient.auth.signOut();
+  if (supabaseClient) {
+    await supabaseClient.auth.signOut();
+  }
+
   currentInvitation = null;
   showPage("home");
 }
 
-function setupButtons() {
-  // Navigation
-  document.querySelectorAll("[data-go]").forEach(button => {
-    button.addEventListener("click", () => showPage(button.dataset.go));
+// Navigation entre les rubriques du panneau délégué
+function showAdminSection(sectionName) {
+  const sections = document.querySelectorAll("[data-admin-section]");
+  const tabs = document.querySelectorAll("[data-admin-tab]");
+
+  if (!sections.length) return;
+
+  let sectionExists = false;
+
+  sections.forEach(section => {
+    const isActive = section.dataset.adminSection === sectionName;
+    section.hidden = !isActive;
+
+    if (isActive) sectionExists = true;
   });
 
-  // Connexion
+  if (!sectionExists) {
+    sectionName = sections[0].dataset.adminSection;
+
+    sections.forEach(section => {
+      section.hidden = section.dataset.adminSection !== sectionName;
+    });
+  }
+
+  tabs.forEach(tab => {
+    const isActive = tab.dataset.adminTab === sectionName;
+
+    tab.classList.toggle("active", isActive);
+    tab.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  showStatus("");
+}
+
+function setupAdminTabs() {
+  document.querySelectorAll("[data-admin-tab]").forEach(tab => {
+    tab.addEventListener("click", () => {
+      showAdminSection(tab.dataset.adminTab);
+    });
+  });
+
+  showAdminSection("invitations");
+}
+
+function setupButtons() {
+  // Navigation générale
+  document.querySelectorAll("[data-go]").forEach(button => {
+    button.addEventListener("click", () => {
+      showPage(button.dataset.go);
+    });
+  });
+
+  // Navigation du panneau d'administration
+  setupAdminTabs();
+
+  // Connexion élève
   document.getElementById("loginForm")?.addEventListener("submit", async event => {
     event.preventDefault();
+
     try {
       const profile = await login(
         document.getElementById("loginUsername").value,
@@ -112,6 +181,7 @@ function setupButtons() {
       } else {
         document.getElementById("studentWelcome").textContent =
           `Bienvenue ${profile.first_name} !`;
+
         showPage("student");
       }
     } catch (error) {
@@ -122,6 +192,7 @@ function setupButtons() {
   // Connexion délégué
   document.getElementById("delegateLoginForm")?.addEventListener("submit", async event => {
     event.preventDefault();
+
     try {
       const profile = await login(
         document.getElementById("delegateUsername").value,
@@ -139,26 +210,32 @@ function setupButtons() {
     }
   });
 
-  // Vérifier le code
+  // Vérification du code d'invitation
   document.getElementById("verifyCode")?.addEventListener("click", async () => {
     showStatus("");
     currentInvitation = null;
+
     document.getElementById("signupFields").hidden = true;
 
     try {
       const code = document.getElementById("inviteCode").value.trim();
-      const result = await callAuthFunction("verify_code", { code });
+
+      const result = await callAuthFunction("verify_code", {
+        code
+      });
+
       currentInvitation = result;
 
       document.getElementById("welcomeName").textContent =
         `Bienvenue ${result.firstName} ! Tu peux créer ton compte.`;
+
       document.getElementById("signupFields").hidden = false;
     } catch (error) {
       showError(error);
     }
   });
 
-  // Créer un compte
+  // Création du compte élève
   document.getElementById("signupForm")?.addEventListener("submit", async event => {
     event.preventDefault();
 
@@ -176,34 +253,48 @@ function setupButtons() {
       });
 
       alert(result.message || "Compte créé ! Tu peux te connecter.");
+
       currentInvitation = null;
       event.target.reset();
+
       document.getElementById("signupFields").hidden = true;
+
       showPage("login");
     } catch (error) {
       showError(error);
     }
   });
 
-  // Créer une invitation
+  // Création d'une invitation par Ziyad
   document.getElementById("invitationForm")?.addEventListener("submit", async event => {
     event.preventDefault();
 
     try {
-      const firstName = document.getElementById("studentFirstName").value.trim();
+      const firstName = document
+        .getElementById("studentFirstName")
+        .value.trim();
+
+      if (!firstName) {
+        throw new Error("Entre le prénom de l'élève.");
+      }
+
       const result = await callAuthFunction("create_invitation", {
         studentFirstName: firstName
       });
 
       const output = document.getElementById("generatedCode");
+
       output.hidden = false;
-      output.textContent = `Code de ${result.studentFirstName} : ${result.code}`;
+      output.textContent =
+        `Code de ${result.studentFirstName} : ${result.code}`;
+
       event.target.reset();
     } catch (error) {
       showError(error);
     }
   });
 
+  // Déconnexion
   document.getElementById("studentLogout")?.addEventListener("click", logout);
   document.getElementById("delegateLogout")?.addEventListener("click", logout);
 }
@@ -212,6 +303,7 @@ async function restoreSession() {
   if (!supabaseClient) return;
 
   const { data } = await supabaseClient.auth.getSession();
+
   if (!data.session) return;
 
   const { data: profile, error } = await supabaseClient
@@ -230,6 +322,7 @@ async function restoreSession() {
   } else {
     document.getElementById("studentWelcome").textContent =
       `Bienvenue ${profile.first_name} !`;
+
     showPage("student");
   }
 }
