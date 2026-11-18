@@ -5,6 +5,11 @@ const SUPABASE_KEY = "sb_publishable_-hO6YX_UrreBu38ZyKwvJA_2IS-DhDH";
 let supabaseClient = null;
 let currentInvitation = null;
 
+function showStatus(message) {
+  const element = document.getElementById("statusMessage");
+  if (element) element.textContent = message || "";
+}
+
 function showPage(page) {
   document.querySelectorAll("[data-page]").forEach(section => {
     section.hidden = section.dataset.page !== page;
@@ -12,23 +17,13 @@ function showPage(page) {
   showStatus("");
 }
 
-function showStatus(message) {
-  const element = document.getElementById("statusMessage");
-  if (element) element.textContent = message || "";
-}
-
 function showError(error) {
   showStatus(error.message || "Une erreur est survenue.");
 }
 
-// Navigation : fonctionne même si Supabase ne répond pas.
-document.querySelectorAll("[data-go]").forEach(button => {
-  button.addEventListener("click", () => showPage(button.dataset.go));
-});
-
 function initSupabase() {
   if (!window.supabase) {
-    showStatus("Connexion Supabase impossible : vérifie ta connexion Internet.");
+    showStatus("Supabase ne se charge pas. Vérifie Internet.");
     return false;
   }
 
@@ -36,7 +31,6 @@ function initSupabase() {
     SUPABASE_URL,
     SUPABASE_KEY
   );
-
   return true;
 }
 
@@ -99,120 +93,122 @@ async function logout() {
   showPage("home");
 }
 
-// Connexion élève
-document.getElementById("loginForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  showStatus("");
+function setupButtons() {
+  // Navigation
+  document.querySelectorAll("[data-go]").forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.go));
+  });
 
-  try {
-    const profile = await login(
-      document.getElementById("loginUsername").value,
-      document.getElementById("loginPassword").value
-    );
+  // Connexion
+  document.getElementById("loginForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
+    try {
+      const profile = await login(
+        document.getElementById("loginUsername").value,
+        document.getElementById("loginPassword").value
+      );
 
-    if (profile.role === "delegate") {
+      if (profile.role === "delegate") {
+        showPage("delegate");
+      } else {
+        document.getElementById("studentWelcome").textContent =
+          `Bienvenue ${profile.first_name} !`;
+        showPage("student");
+      }
+    } catch (error) {
+      showError(error);
+    }
+  });
+
+  // Connexion délégué
+  document.getElementById("delegateLoginForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
+    try {
+      const profile = await login(
+        document.getElementById("delegateUsername").value,
+        document.getElementById("delegatePassword").value
+      );
+
+      if (profile.role !== "delegate") {
+        await supabaseClient.auth.signOut();
+        throw new Error("Ce compte n'a pas les droits de délégué.");
+      }
+
       showPage("delegate");
-    } else {
-      document.getElementById("studentWelcome").textContent =
-        `Bienvenue ${profile.first_name} !`;
-      showPage("student");
+    } catch (error) {
+      showError(error);
     }
-  } catch (error) {
-    showError(error);
-  }
-});
+  });
 
-// Connexion délégué
-document.getElementById("delegateLoginForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  showStatus("");
-
-  try {
-    const profile = await login(
-      document.getElementById("delegateUsername").value,
-      document.getElementById("delegatePassword").value
-    );
-
-    if (profile.role !== "delegate") {
-      await supabaseClient.auth.signOut();
-      throw new Error("Ce compte n'a pas les droits de délégué.");
-    }
-
-    showPage("delegate");
-  } catch (error) {
-    showError(error);
-  }
-});
-
-// Vérification du code d'invitation
-document.getElementById("verifyCode").addEventListener("click", async () => {
-  showStatus("");
-  currentInvitation = null;
-  document.getElementById("signupFields").hidden = true;
-
-  try {
-    const code = document.getElementById("inviteCode").value.trim();
-    const result = await callAuthFunction("verify_code", { code });
-
-    currentInvitation = result;
-    document.getElementById("welcomeName").textContent =
-      `Bienvenue ${result.firstName} ! Tu peux créer ton compte.`;
-    document.getElementById("signupFields").hidden = false;
-  } catch (error) {
-    showError(error);
-  }
-});
-
-// Création du compte élève
-document.getElementById("signupForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  if (!currentInvitation) {
-    showStatus("Vérifie d'abord ton code d'invitation.");
-    return;
-  }
-
-  try {
-    const result = await callAuthFunction("signup", {
-      username: document.getElementById("newUsername").value,
-      password: document.getElementById("newPassword").value,
-      invitationId: currentInvitation.invitationId,
-      reservationToken: currentInvitation.reservationToken
-    });
-
-    alert(result.message || "Compte créé ! Tu peux maintenant te connecter.");
+  // Vérifier le code
+  document.getElementById("verifyCode")?.addEventListener("click", async () => {
+    showStatus("");
     currentInvitation = null;
-    event.target.reset();
     document.getElementById("signupFields").hidden = true;
-    showPage("login");
-  } catch (error) {
-    showError(error);
-  }
-});
 
-// Génération d'une invitation
-document.getElementById("invitationForm").addEventListener("submit", async event => {
-  event.preventDefault();
+    try {
+      const code = document.getElementById("inviteCode").value.trim();
+      const result = await callAuthFunction("verify_code", { code });
+      currentInvitation = result;
 
-  try {
-    const firstName = document.getElementById("studentFirstName").value.trim();
-    const result = await callAuthFunction("create_invitation", {
-      studentFirstName: firstName
-    });
+      document.getElementById("welcomeName").textContent =
+        `Bienvenue ${result.firstName} ! Tu peux créer ton compte.`;
+      document.getElementById("signupFields").hidden = false;
+    } catch (error) {
+      showError(error);
+    }
+  });
 
-    const output = document.getElementById("generatedCode");
-    output.hidden = false;
-    output.textContent = `Code de ${result.studentFirstName} : ${result.code}`;
-    event.target.reset();
-  } catch (error) {
-    showError(error);
-  }
-});
+  // Créer un compte
+  document.getElementById("signupForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
 
-document.getElementById("studentLogout").addEventListener("click", logout);
-document.getElementById("delegateLogout").addEventListener("click", logout);
+    if (!currentInvitation) {
+      showStatus("Vérifie d'abord ton code d'invitation.");
+      return;
+    }
 
-// Restauration de la session
+    try {
+      const result = await callAuthFunction("signup", {
+        username: document.getElementById("newUsername").value,
+        password: document.getElementById("newPassword").value,
+        invitationId: currentInvitation.invitationId,
+        reservationToken: currentInvitation.reservationToken
+      });
+
+      alert(result.message || "Compte créé ! Tu peux te connecter.");
+      currentInvitation = null;
+      event.target.reset();
+      document.getElementById("signupFields").hidden = true;
+      showPage("login");
+    } catch (error) {
+      showError(error);
+    }
+  });
+
+  // Créer une invitation
+  document.getElementById("invitationForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    try {
+      const firstName = document.getElementById("studentFirstName").value.trim();
+      const result = await callAuthFunction("create_invitation", {
+        studentFirstName: firstName
+      });
+
+      const output = document.getElementById("generatedCode");
+      output.hidden = false;
+      output.textContent = `Code de ${result.studentFirstName} : ${result.code}`;
+      event.target.reset();
+    } catch (error) {
+      showError(error);
+    }
+  });
+
+  document.getElementById("studentLogout")?.addEventListener("click", logout);
+  document.getElementById("delegateLogout")?.addEventListener("click", logout);
+}
+
 async function restoreSession() {
   if (!supabaseClient) return;
 
@@ -239,5 +235,8 @@ async function restoreSession() {
   }
 }
 
-initSupabase();
-restoreSession().catch(showError);
+document.addEventListener("DOMContentLoaded", () => {
+  setupButtons();
+  initSupabase();
+  restoreSession().catch(showError);
+});
