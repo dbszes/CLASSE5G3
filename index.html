@@ -26,9 +26,7 @@
           Un espace rien qu'à nous pour partager les informations,
           retrouver les cours et faire vivre notre classe.
         </p>
-
         <div class="hero-line"></div>
-
         <div class="hero-bottom">
           <div class="hero-icon">✦</div>
           <div>
@@ -50,6 +48,7 @@
         <span>PORTAIL DE LA CLASSE</span>
       </header>
 
+      <!-- ACCUEIL -->
       <section class="screen" data-page="home">
         <div class="welcome-label">TON ESPACE NUMÉRIQUE</div>
         <h2>Heureux de te voir !</h2>
@@ -87,6 +86,7 @@
         </div>
       </section>
 
+      <!-- CONNEXION ÉLÈVE -->
       <section class="screen" data-page="login" hidden>
         <button class="back-button" data-go="home">← Retour à l'accueil</button>
         <div class="welcome-label">BON RETOUR PARMI NOUS</div>
@@ -106,6 +106,7 @@
         </form>
       </section>
 
+      <!-- INSCRIPTION ÉLÈVE -->
       <section class="screen" data-page="signup" hidden>
         <button class="back-button" data-go="home">← Retour à l'accueil</button>
         <div class="welcome-label">BIENVENUE DANS LA CLASSE</div>
@@ -136,6 +137,7 @@
         </form>
       </section>
 
+      <!-- CONNEXION DÉLÉGUÉ -->
       <section class="screen" data-page="delegate-login" hidden>
         <button class="back-button" data-go="home">← Retour à l'accueil</button>
         <div class="welcome-label">ACCÈS RESPONSABLE</div>
@@ -155,6 +157,7 @@
         </form>
       </section>
 
+      <!-- ESPACE ÉLÈVE -->
       <section class="screen" data-page="student" hidden>
         <div class="welcome-label">ESPACE ÉLÈVE</div>
         <h2 id="studentWelcome">Bienvenue !</h2>
@@ -173,33 +176,128 @@
         </button>
       </section>
 
+      <!-- NOUVEL ESPACE DÉLÉGUÉ -->
       <section class="screen" data-page="delegate" hidden>
+
         <div class="welcome-label">ESPACE ADMINISTRATION</div>
         <h2>Bonjour Ziyad !</h2>
-        <p class="muted">Bienvenue dans ton espace de délégué.</p>
+        <p class="muted">Gère les différents espaces de la 5e 3.</p>
 
-        <div class="dashboard-card">
-          <span class="dashboard-icon">♛</span>
-          <div>
-            <strong>Gestion des invitations</strong>
-            <p>Crée un code personnel pour un élève.</p>
-          </div>
-        </div>
+        <!-- MENU ADMINISTRATION -->
+        <nav class="admin-menu" aria-label="Administration">
 
-        <form id="invitationForm">
-          <label for="studentFirstName">Prénom de l'élève</label>
-          <input id="studentFirstName" required maxlength="60" placeholder="Prénom">
-
-          <button class="primary-button" type="submit">
-            Générer un code <span>→</span>
+          <button class="admin-tab active" type="button" data-admin-tab="invitations">
+            <span>👥</span> Élèves
           </button>
-        </form>
 
-        <div id="generatedCode" class="generated-code" hidden></div>
+          <button class="admin-tab" type="button" data-admin-tab="timetable">
+            <span>📅</span> Emploi du temps
+          </button>
+
+          <button class="admin-tab" type="button" data-admin-tab="teachers">
+            <span>🎓</span> Professeurs
+          </button>
+
+          <button class="admin-tab" type="button" data-admin-tab="weeks">
+            <span>🗓️</span> Semaines
+          </button>
+
+          <button class="admin-tab" type="button" data-admin-tab="announcements">
+            <span>📢</span> Annonces
+          </button>
+
+        </nav>
+
+        <!-- GESTION DES ÉLÈVES : CONSERVÉE -->
+        <section class="admin-section active" data-admin-section="invitations">
+          <div class="dashboard-card">
+            <span class="dashboard-icon">👥</span>
+            <div>
+              <strong>Gestion des invitations</strong>
+              <p>Crée un code personnel pour chaque nouvel élève.</p>
+            </div>
+          </div>
+
+          <form id="invitationForm">
+            <label for="studentFirstName">Prénom de l'élève</label>
+            <input id="studentFirstName" required maxlength="60" placeholder="Prénom">
+
+            <button class="primary-button" type="submit">
+              Générer un code <span>→</span>
+            </button>
+          </form>
+
+          <div id="generatedCode" class="generated-code" hidden></div>
+        </section>
+
+        <!-- EMPLOI DU TEMPS -->
+        <section class="admin-section" data-admin-section="timetable" hidden>
+          <h3>Emploi du temps</h3>
+          <p class="muted">Gérer les cours de la classe.</p>
+
+          <div class="dashboard-card">
+            <span class="dashboard-icon">📅</span>
+            <div>
+              <strong>Planning de la classe</strong>
+              <p>Ajout et modification des cours à venir.</p>
+            </div>
+          </div>
+
+          <p class="muted">Le formulaire de gestion des cours sera ajouté à l'étape suivante.</p>
+        </section>
+
+        <!-- PROFESSEURS -->
+        <section class="admin-section" data-admin-section="teachers" hidden>
+          <h3>Professeurs</h3>
+          <p class="muted">Gérer les enseignants de la classe.</p>
+
+          <div class="dashboard-card">
+            <span class="dashboard-icon">🎓</span>
+            <div>
+              <strong>Liste des professeurs</strong>
+              <p>Ajout et modification des enseignants.</p>
+            </div>
+          </div>
+
+          <p class="muted">La gestion des professeurs sera ajoutée à l'étape suivante.</p>
+        </section>
+
+        <!-- SEMAINES -->
+        <section class="admin-section" data-admin-section="weeks" hidden>
+          <h3>Semaines de cours</h3>
+          <p class="muted">Choisir la semaine actuellement suivie par la classe.</p>
+
+          <div class="dashboard-card">
+            <span class="dashboard-icon">🗓️</span>
+            <div>
+              <strong>Semaines A, B, C…</strong>
+              <p>Choisir et organiser les semaines.</p>
+            </div>
+          </div>
+
+          <p class="muted">Le sélecteur de semaine sera ajouté à l'étape suivante.</p>
+        </section>
+
+        <!-- ANNONCES -->
+        <section class="admin-section" data-admin-section="announcements" hidden>
+          <h3>Annonces de classe</h3>
+          <p class="muted">Publier une information pour tous les élèves.</p>
+
+          <div class="dashboard-card">
+            <span class="dashboard-icon">📢</span>
+            <div>
+              <strong>Informations de la classe</strong>
+              <p>Les annonces seront visibles par tous les membres.</p>
+            </div>
+          </div>
+
+          <p class="muted">Le formulaire de publication sera ajouté à l'étape suivante.</p>
+        </section>
 
         <button class="back-button logout-button" id="delegateLogout">
           Se déconnecter
         </button>
+
       </section>
 
       <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
