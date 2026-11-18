@@ -4,445 +4,169 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f4f6fc">
-  <title>Classe 5e 3</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#101c38">
+  <title>5e 3 — Espace de classe</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <div class="page-background"></div>
+  <main class="auth-shell">
+    <section class="visual-panel">
+      <div class="visual-top">
+        <div class="brand-mark">5<span>3</span></div>
+        <span class="brand-label">ESPACE DE CLASSE</span>
+      </div>
 
-  <section id="welcomeScreen" class="welcome-screen">
-    <div class="welcome-card">
-      <div class="logo-mark">5<span>3</span></div>
-      <p class="eyebrow">ESPACE DE CLASSE</p>
-      <h1>Bienvenue en<br><span>5e 3.</span></h1>
-      <p class="welcome-description">
-        Retrouvez l'emploi du temps, les informations et les discussions de la classe.
-      </p>
+      <div class="visual-content">
+        <div class="visual-kicker"><span></span> NOTRE ESPACE NUMÉRIQUE</div>
+        <h1>Bienvenue<br>dans votre<br><span>classe.</span></h1>
+        <p>Un espace pour s'organiser, partager les informations et rester connectés toute l'année.</p>
+      </div>
 
-      <form id="welcomeForm">
-        <label for="studentName">Ton prénom</label>
-        <input id="studentName" type="text" placeholder="Entre ton prénom" maxlength="30" required>
-        <button class="primary-button full-button" type="submit">
-          Accéder à la classe <span>→</span>
-        </button>
-      </form>
-      <p class="small-note">Espace de consultation de la classe 5e 3</p>
-    </div>
-  </section>
-
-  <div id="app" class="app-shell hidden">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-icon">5<span>3</span></div>
-        <div>
-          <strong>Classe 5e 3</strong>
-          <small>Notre espace de classe</small>
+      <div class="visual-art" aria-hidden="true">
+        <div class="art-orbit orbit-one"></div>
+        <div class="art-orbit orbit-two"></div>
+        <div class="art-orbit orbit-three"></div>
+        <div class="art-star">✳</div>
+        <div class="art-card">
+          <div class="art-card-top"><span></span><span></span><span></span></div>
+          <div class="art-line long"></div>
+          <div class="art-line medium"></div>
+          <div class="art-blocks"><i></i><i></i><i></i></div>
         </div>
       </div>
 
-      <div class="sidebar-label">MENU PRINCIPAL</div>
-      <nav class="navigation">
-        <button class="nav-link active" data-page="schedule">
-          <span class="nav-icon">▦</span>
-          <span>Emploi du temps</span>
-        </button>
-        <button class="nav-link" data-page="news">
-          <span class="nav-icon">◈</span>
-          <span>Informations</span>
-        </button>
-        <button class="nav-link" data-page="messages">
-          <span class="nav-icon">☏</span>
-          <span>Discussions</span>
-        </button>
-      </nav>
-
-      <div class="sidebar-bottom">
-        <div class="class-mini-card">
-          <div class="mini-card-icon">✦</div>
-          <strong>5e 3</strong>
-          <span>Une classe, une équipe.</span>
-        </div>
-        <button id="logoutButton" class="logout-button">Changer de prénom ↗</button>
+      <div class="visual-footer">
+        <span>CLASSE DE 5e 3</span>
+        <span>ENSEMBLE, AU QUOTIDIEN.</span>
       </div>
-    </aside>
+    </section>
 
-    <main class="main-content">
-      <header class="topbar">
-        <div>
-          <p class="topbar-date">ESPACE SCOLAIRE</p>
-          <h2 id="pageHeading">Emploi du temps</h2>
-        </div>
-        <div class="profile-chip">
-          <div class="avatar" id="avatarInitial">É</div>
-          <div class="profile-text">
-            <strong id="profileName">Élève</strong>
-            <span>Classe de 5e 3</span>
-          </div>
-        </div>
-      </header>
+    <section class="form-panel">
+      <div class="mobile-brand">
+        <div class="brand-mark">5<span>3</span></div>
+        <span>CLASSE DE 5e 3</span>
+      </div>
 
-      <!-- EMPLOI DU TEMPS -->
-      <section id="schedulePage" class="page-section">
-        <div class="welcome-banner">
-          <div>
-            <span class="banner-tag">NOTRE CLASSE</span>
-            <h1>Une nouvelle journée,<br>de nouveaux objectifs.</h1>
-            <p>Retrouve ici les horaires et les cours de la classe.</p>
-          </div>
-          <div class="banner-decoration">
-            <div class="decoration-circle circle-one"></div>
-            <div class="decoration-circle circle-two"></div>
-            <div class="decoration-symbol">✳</div>
-          </div>
+      <div class="form-wrap">
+        <div class="form-heading">
+          <div class="welcome-icon">✦</div>
+          <p class="eyebrow">TON ESPACE PERSONNEL</p>
+          <h2 id="formTitle">Content de te revoir.</h2>
+          <p id="formSubtitle">Connecte-toi pour retrouver ton espace de classe.</p>
         </div>
 
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">ORGANISATION</p>
-            <h3>Emploi du temps</h3>
-            <p class="muted">Les horaires de la semaine</p>
-          </div>
-          <div class="week-indicator">
-            <span class="week-dot"></span>
-            <span>Semaine <strong id="currentWeek">A</strong></span>
-          </div>
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-view="login">Se connecter</button>
+          <button class="mode-tab" data-view="register">Créer un compte</button>
         </div>
 
-        <div class="schedule-card">
-          <div class="schedule-topline">
-            <div>
-              <strong>Planning hebdomadaire</strong>
-              <span>Horaires de 8 h à 17 h</span>
+        <!-- CONNEXION -->
+        <form id="loginForm" class="auth-form">
+          <div class="field">
+            <label for="loginIdentifier">Identifiant</label>
+            <input id="loginIdentifier" name="identifier" type="text"
+              placeholder="Ton identifiant" autocomplete="username" required>
+          </div>
+
+          <div class="field">
+            <label for="loginPassword">Mot de passe</label>
+            <div class="password-wrap">
+              <input id="loginPassword" name="password" type="password"
+                placeholder="Ton mot de passe" autocomplete="current-password" required>
+              <button type="button" class="toggle-password" data-target="loginPassword" aria-label="Afficher le mot de passe">◉</button>
             </div>
-            <span class="schedule-status">5e 3</span>
           </div>
 
-          <div class="table-scroll">
-            <table class="timetable">
-              <thead>
-                <tr>
-                  <th class="time-heading">HEURE</th>
-                  <th>LUNDI</th>
-                  <th>MARDI</th>
-                  <th>MERCREDI</th>
-                  <th>JEUDI</th>
-                  <th>VENDREDI</th>
-                </tr>
-              </thead>
-              <tbody id="timetableBody"></tbody>
-            </table>
-          </div>
-          <div class="schedule-legend">
-            <span><i class="legend-dot lesson-dot"></i> Cours</span>
-            <span><i class="legend-dot break-dot"></i> Pause déjeuner</span>
-          </div>
-        </div>
+          <button class="submit-button" type="submit">
+            <span>Se connecter</span><span class="button-arrow">→</span>
+          </button>
+          <p class="form-hint">Ton compte a déjà été créé avec un code ? Connecte-toi ici.</p>
+        </form>
 
-        <div class="bottom-info-grid">
-          <article class="info-card">
-            <div class="info-icon blue-icon">◷</div>
-            <div>
-              <span>HORAIRES</span>
-              <strong>08:00 – 17:00</strong>
-              <p>Les horaires de la journée</p>
+        <!-- CRÉATION DE COMPTE -->
+        <form id="registerForm" class="auth-form hidden">
+          <div class="step-indicator">
+            <span class="step active" id="stepOneDot">1</span>
+            <i></i>
+            <span class="step" id="stepTwoDot">2</span>
+          </div>
+
+          <div id="registerStepOne">
+            <div class="field">
+              <label for="inviteCode">Code fourni par Ziyad</label>
+              <input id="inviteCode" name="inviteCode" type="text"
+                placeholder="Saisis ton code personnel" autocomplete="off" required>
+              <small>Ce code est personnel et ne peut être utilisé qu'une seule fois.</small>
             </div>
-          </article>
-          <article class="info-card">
-            <div class="info-icon violet-icon">▤</div>
-            <div>
-              <span>PAUSE DÉJEUNER</span>
-              <strong>12:00 – 13:00</strong>
-              <p>Pause de la mi-journée</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- INFORMATIONS -->
-      <section id="newsPage" class="page-section hidden">
-        <div class="page-intro-card">
-          <div class="intro-icon">◈</div>
-          <div>
-            <p class="eyebrow">RESTER INFORMÉ</p>
-            <h3>Informations de la classe</h3>
-            <p>Les annonces importantes seront affichées ici.</p>
+            <button class="submit-button" type="button" id="verifyCodeButton">
+              <span>Vérifier mon code</span><span class="button-arrow">→</span>
+            </button>
           </div>
-        </div>
 
-        <div class="section-heading simple-heading">
-          <div>
-            <h3>Dernières informations</h3>
-            <p class="muted">Annonces destinées à toute la classe</p>
-          </div>
-        </div>
-
-        <div id="announcementsList" class="empty-state">
-          <div class="empty-icon">✦</div>
-          <h3>Aucune information pour le moment</h3>
-          <p>Les prochaines annonces de la classe apparaîtront ici.</p>
-        </div>
-      </section>
-
-      <!-- DISCUSSIONS -->
-      <section id="messagesPage" class="page-section hidden">
-        <div class="page-intro-card">
-          <div class="intro-icon message-intro-icon">☏</div>
-          <div>
-            <p class="eyebrow">ÉCHANGER ENSEMBLE</p>
-            <h3>Discussions</h3>
-            <p>Un espace pour communiquer avec la classe ou le délégué.</p>
-          </div>
-        </div>
-
-        <div class="discussion-layout">
-          <div class="discussion-main">
-            <div class="discussion-heading">
+          <div id="registerStepTwo" class="hidden">
+            <div class="success-greeting">
+              <div class="success-check">✓</div>
               <div>
-                <h3 id="conversationTitle">Toute la classe</h3>
-                <p id="conversationDescription">Discussion visible par les membres de la classe</p>
-              </div>
-              <span class="online-indicator">● Espace classe</span>
-            </div>
-
-            <div class="conversation-tabs">
-              <button class="conversation-tab active" data-conversation="class">
-                Toute la classe
-              </button>
-              <button class="conversation-tab" data-conversation="delegate">
-                Le délégué – Ziyad
-              </button>
-            </div>
-
-            <div id="messageList" class="message-list">
-              <div class="empty-messages">
-                <div class="empty-icon">✉</div>
-                <strong>La discussion est vide</strong>
-                <span>Envoie le premier message !</span>
+                <strong id="greetingName">Bonjour !</strong>
+                <span>Ton code a été reconnu.</span>
               </div>
             </div>
 
-            <form id="messageForm" class="message-form">
-              <input id="messageInput" type="text" placeholder="Écris ton message..." maxlength="1000" required>
-              <button type="submit" aria-label="Envoyer le message">➤</button>
-            </form>
-            <p class="message-disclaimer">
-              Dans cette version, les messages sont enregistrés uniquement sur cet appareil.
-            </p>
+            <div class="field">
+              <label for="newIdentifier">Choisis ton identifiant</label>
+              <input id="newIdentifier" type="text" placeholder="Ex. mia53"
+                autocomplete="username" required minlength="3" maxlength="30">
+            </div>
+
+            <div class="field">
+              <label for="newPassword">Choisis ton mot de passe</label>
+              <div class="password-wrap">
+                <input id="newPassword" type="password" placeholder="8 caractères minimum"
+                  autocomplete="new-password" required minlength="8">
+                <button type="button" class="toggle-password" data-target="newPassword" aria-label="Afficher le mot de passe">◉</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="confirmPassword">Confirme ton mot de passe</label>
+              <input id="confirmPassword" type="password" placeholder="Retape ton mot de passe"
+                autocomplete="new-password" required minlength="8">
+            </div>
+
+            <button class="submit-button" type="submit">
+              <span>Créer mon compte</span><span class="button-arrow">→</span>
+            </button>
+            <p class="form-hint">Après la création, tu devras te déconnecter puis te connecter avec tes nouveaux identifiants.</p>
           </div>
+        </form>
 
-          <aside class="discussion-side-card">
-            <div class="side-card-icon">✦</div>
-            <h3>Deux espaces pour échanger</h3>
-            <p><strong>Toute la classe</strong><br>Pour discuter avec les membres de la 5e 3.</p>
-            <div class="side-divider"></div>
-            <p><strong>Le délégué – Ziyad</strong><br>Pour lui envoyer un message privé.</p>
-            <div class="privacy-note">Les messages privés ne sont pas une messagerie sécurisée dans cette version locale.</div>
-          </aside>
+        <!-- ACCÈS DÉLÉGUÉ -->
+        <div class="delegate-entry">
+          <div class="delegate-divider"><span>OU</span></div>
+          <button type="button" id="delegateButton" class="delegate-button">
+            <span class="delegate-icon">♛</span>
+            <span><strong>Espace délégué</strong><small>Accès à l'administration de la classe</small></span>
+            <span class="delegate-arrow">→</span>
+          </button>
         </div>
-      </section>
 
-      <footer class="footer">
-        <span>Classe de 5e 3</span>
-        <span>Notre espace de classe · <span id="footerYear"></span></span>
+        <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+
+        <p class="security-note">
+          <span>◈</span> Les comptes et les codes seront vérifiés par le service sécurisé de la classe.
+        </p>
+      </div>
+
+      <footer class="form-footer">
+        <span>5e 3 · Espace de classe</span>
+        <span>© <span id="year"></span></span>
       </footer>
-    </main>
-  </div>
+    </section>
+  </main>
 
-  <div id="toast" class="toast"></div>
-
-  <script>
-    const STORAGE_KEY = "classe53_clean_v1";
-
-    const days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
-    const periods = [
-      { label: "08:00", end: "09:00" },
-      { label: "09:00", end: "10:00" },
-      { label: "10:00", end: "11:00" },
-      { label: "11:00", end: "12:00" },
-      { label: "13:00", end: "14:00" },
-      { label: "14:00", end: "15:00" },
-      { label: "15:00", end: "16:00" },
-      { label: "16:00", end: "17:00" }
-    ];
-
-    let currentConversation = "class";
-    let student = localStorage.getItem("classe53_student_name") || "";
-
-    function loadData() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
-          messages: { class: [], delegate: [] }
-        };
-      } catch {
-        return { messages: { class: [], delegate: [] } };
-      }
-    }
-
-    let data = loadData();
-
-    function saveData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.classList.add("visible");
-      clearTimeout(window.toastTimeout);
-      window.toastTimeout = setTimeout(() => toast.classList.remove("visible"), 2600);
-    }
-
-    function enterApp(name) {
-      student = name.trim();
-      if (!student) return;
-      localStorage.setItem("classe53_student_name", student);
-      document.getElementById("welcomeScreen").classList.add("hidden");
-      document.getElementById("app").classList.remove("hidden");
-      document.getElementById("profileName").textContent = student;
-      document.getElementById("avatarInitial").textContent = student.charAt(0).toUpperCase();
-    }
-
-    document.getElementById("welcomeForm").addEventListener("submit", event => {
-      event.preventDefault();
-      enterApp(document.getElementById("studentName").value);
-    });
-
-    if (student) {
-      enterApp(student);
-    }
-
-    document.getElementById("logoutButton").addEventListener("click", () => {
-      localStorage.removeItem("classe53_student_name");
-      document.getElementById("app").classList.add("hidden");
-      document.getElementById("welcomeScreen").classList.remove("hidden");
-      document.getElementById("studentName").value = "";
-    });
-
-    function renderTimetable() {
-      const body = document.getElementById("timetableBody");
-      body.innerHTML = "";
-
-      periods.forEach((period, index) => {
-        if (index === 4) {
-          const lunchRow = document.createElement("tr");
-          lunchRow.className = "lunch-row";
-          lunchRow.innerHTML = `
-            <td class="lunch-time">12:00 – 13:00</td>
-            <td colspan="5"><div class="lunch-content">☀ &nbsp; PAUSE DÉJEUNER</div></td>
-          `;
-          body.appendChild(lunchRow);
-        }
-
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td class="time-cell">
-            <strong>${period.label}</strong>
-            <span>${period.end}</span>
-          </td>
-          ${days.map(() => `<td class="empty-slot"><div class="slot-placeholder"></div></td>`).join("")}
-        `;
-        body.appendChild(row);
-      });
-    }
-
-    document.querySelectorAll(".nav-link").forEach(button => {
-      button.addEventListener("click", () => {
-        const page = button.dataset.page;
-        document.querySelectorAll(".nav-link").forEach(item => item.classList.remove("active"));
-        button.classList.add("active");
-
-        document.querySelectorAll(".page-section").forEach(section => section.classList.add("hidden"));
-        document.getElementById(page + "Page").classList.remove("hidden");
-
-        const titles = {
-          schedule: "Emploi du temps",
-          news: "Informations",
-          messages: "Discussions"
-        };
-        document.getElementById("pageHeading").textContent = titles[page];
-
-        if (page === "messages") renderMessages();
-      });
-    });
-
-    document.querySelectorAll(".conversation-tab").forEach(button => {
-      button.addEventListener("click", () => {
-        currentConversation = button.dataset.conversation;
-        document.querySelectorAll(".conversation-tab").forEach(item => item.classList.remove("active"));
-        button.classList.add("active");
-
-        const isClass = currentConversation === "class";
-        document.getElementById("conversationTitle").textContent = isClass
-          ? "Toute la classe" : "Le délégué – Ziyad";
-        document.getElementById("conversationDescription").textContent = isClass
-          ? "Discussion visible par les membres de la classe"
-          : "Espace de message privé destiné au délégué";
-
-        renderMessages();
-      });
-    });
-
-    function renderMessages() {
-      const list = document.getElementById("messageList");
-      const messages = data.messages[currentConversation] || [];
-      list.innerHTML = "";
-
-      if (!messages.length) {
-        list.innerHTML = `
-          <div class="empty-messages">
-            <div class="empty-icon">✉</div>
-            <strong>La discussion est vide</strong>
-            <span>Envoie le premier message !</span>
-          </div>`;
-        return;
-      }
-
-      messages.forEach(message => {
-        const item = document.createElement("div");
-        item.className = "message-bubble" + (message.author === student ? " own-message" : "");
-        const author = document.createElement("strong");
-        author.textContent = message.author;
-        const content = document.createElement("p");
-        content.textContent = message.text;
-        const time = document.createElement("span");
-        time.textContent = message.time;
-        item.append(author, content, time);
-        list.appendChild(item);
-      });
-
-      list.scrollTop = list.scrollHeight;
-    }
-
-    document.getElementById("messageForm").addEventListener("submit", event => {
-      event.preventDefault();
-      const input = document.getElementById("messageInput");
-      const text = input.value.trim();
-      if (!text) return;
-
-      data.messages[currentConversation].push({
-        author: student,
-        text,
-        time: new Date().toLocaleTimeString("fr-FR", {
-          hour: "2-digit",
-          minute: "2-digit"
-        })
-      });
-
-      saveData();
-      input.value = "";
-      renderMessages();
-      showToast("Message enregistré sur cet appareil");
-    });
-
-    document.getElementById("footerYear").textContent = new Date().getFullYear();
-
-    renderTimetable();
-    renderMessages();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
