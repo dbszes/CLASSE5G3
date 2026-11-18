@@ -1,4 +1,4 @@
-
+alert("Le fichier app.js fonctionne !");
 const SUPABASE_URL = "https://drsiluusqoyndlcglduv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_-hO6YX_UrreBu38ZyKwvJA_2IS-DhDH";
 
