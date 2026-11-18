@@ -3,174 +3,162 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17234b">
   <title>Classe 5e 3</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js" defer></script>
 </head>
 <body>
-  <main class="container">
-    <section class="welcome">
-      <div class="brand">5e <span>3</span></div>
-      <p class="eyebrow">NOTRE ESPACE DE CLASSE</p>
-      <h1>Bienvenue dans<br>notre classe.</h1>
-      <p class="subtitle">Retrouve les informations, les cours et les actualités de la 5e 3 au même endroit.</p>
-      <div class="decoration">✦</div>
-    </section>
+  <main class="layout">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="logo">5e<span>3</span></div>
+        <span class="school-tag">ESPACE DE CLASSE</span>
+      </div>
 
-    <section class="panel" data-page="home">
-      <h2>Bienvenue !</h2>
-      <p>Que souhaites-tu faire ?</p>
-      <button onclick="ClassApp.showPage('login')">Se connecter</button>
-      <button class="secondary" onclick="ClassApp.showPage('signup')">Créer un compte</button>
-      <button class="delegate-button" onclick="ClassApp.showPage('delegate-login')">Espace délégué</button>
-    </section>
-
-    <section class="panel" data-page="login" hidden>
-      <h2>Content de te revoir !</h2>
-      <p>Connecte-toi à ton espace.</p>
-      <form id="loginForm">
-        <label>Identifiant</label>
-        <input id="loginUsername" required minlength="3" placeholder="Ton identifiant">
-        <label>Mot de passe</label>
-        <input id="loginPassword" type="password" required placeholder="Ton mot de passe">
-        <button type="submit">Se connecter</button>
-      </form>
-      <button class="text-button" onclick="ClassApp.showPage('home')">Retour</button>
-    </section>
-
-    <section class="panel" data-page="signup" hidden>
-      <h2>Créer ton compte</h2>
-      <p>Demande ton code personnel au délégué.</p>
-      <form id="signupForm">
-        <label>Code d'invitation</label>
-        <input id="inviteCode" required placeholder="Ton code personnel">
-        <button type="button" id="verifyCode">Vérifier mon code</button>
-        <p id="welcomeName"></p>
-        <div id="signupFields" hidden>
-          <label>Identifiant</label>
-          <input id="newUsername" required minlength="3" maxlength="24" placeholder="Choisis un identifiant">
-          <label>Mot de passe (10 caractères minimum)</label>
-          <input id="newPassword" type="password" required minlength="10" placeholder="Choisis un mot de passe">
-          <button type="submit">Créer mon compte</button>
+      <div class="hero-content">
+        <p class="eyebrow">BIENVENUE DANS NOTRE UNIVERS</p>
+        <h1>La 5e 3,<br>tous <span>ensemble.</span></h1>
+        <p class="hero-description">
+          Le petit espace de notre classe pour retrouver les informations,
+          suivre les cours et rester en contact.
+        </p>
+        <div class="hero-line"></div>
+        <div class="hero-bottom">
+          <div class="hero-icon">✦</div>
+          <div>
+            <strong>Une classe, un espace.</strong>
+            <p>Tout ce qui concerne notre classe au même endroit.</p>
+          </div>
         </div>
-      </form>
-      <button class="text-button" onclick="ClassApp.showPage('home')">Retour</button>
+      </div>
+
+      <div class="orb orb-one"></div>
+      <div class="orb orb-two"></div>
+      <div class="hero-number">05 / 03</div>
     </section>
 
-    <section class="panel" data-page="delegate-login" hidden>
-      <h2>Espace délégué</h2>
-      <p>Connexion réservée au délégué.</p>
-      <form id="delegateLoginForm">
-        <label>Identifiant</label>
-        <input id="delegateUsername" required placeholder="Identifiant du délégué">
-        <label>Mot de passe</label>
-        <input id="delegatePassword" type="password" required placeholder="Mot de passe">
-        <button type="submit">Accéder à mon espace</button>
-      </form>
-      <button class="text-button" onclick="ClassApp.showPage('home')">Retour</button>
-    </section>
+    <section class="main-panel">
+      <header class="panel-header">
+        <span class="online-dot"></span>
+        <span>PORTAIL DE LA CLASSE</span>
+      </header>
 
-    <section class="panel" data-page="student" hidden>
-      <h2>Bienvenue dans la classe !</h2>
-      <p>Tu es connecté à ton espace élève.</p>
-      <button onclick="ClassApp.logout()">Se déconnecter</button>
-    </section>
+      <section class="screen" data-page="home">
+        <div class="welcome-label">TON ESPACE NUMÉRIQUE</div>
+        <h2>Ravi de te retrouver !</h2>
+        <p class="muted">Choisis comment tu souhaites accéder à la classe.</p>
 
-    <section class="panel" data-page="delegate" hidden>
-      <h2>Espace délégué</h2>
-      <p>Bienvenue Ziyad !</p>
-      <form id="invitationForm">
-        <label>Prénom de l'élève</label>
-        <input id="studentFirstName" required placeholder="Prénom de l'élève">
-        <button type="submit">Générer un code</button>
-      </form>
-      <p id="generatedCode"></p>
-      <button onclick="ClassApp.logout()">Se déconnecter</button>
+        <button class="choice-card" data-go="login">
+          <span class="choice-icon blue">↗</span>
+          <span class="choice-copy">
+            <strong>Se connecter</strong>
+            <small>J'ai déjà un compte</small>
+          </span>
+          <span class="choice-arrow">›</span>
+        </button>
+
+        <button class="choice-card" data-go="signup">
+          <span class="choice-icon purple">＋</span>
+          <span class="choice-copy">
+            <strong>Créer un compte</strong>
+            <small>J'ai un code d'invitation</small>
+          </span>
+          <span class="choice-arrow">›</span>
+        </button>
+
+        <button class="choice-card" data-go="delegate-login">
+          <span class="choice-icon gold">♛</span>
+          <span class="choice-copy">
+            <strong>Espace délégué</strong>
+            <small>Accès réservé à Ziyad</small>
+          </span>
+          <span class="choice-arrow">›</span>
+        </button>
+
+        <div class="panel-foot">Un espace privé réservé aux élèves de la 5e 3.</div>
+      </section>
+
+      <section class="screen" data-page="login" hidden>
+        <button class="back-button" data-go="home">← Retour</button>
+        <div class="welcome-label">BON RETOUR</div>
+        <h2>Connecte-toi.</h2>
+        <p class="muted">Retrouve ton espace personnel.</p>
+        <form id="loginForm">
+          <label for="loginUsername">Identifiant</label>
+          <input id="loginUsername" autocomplete="username" required placeholder="Ton identifiant">
+          <label for="loginPassword">Mot de passe</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Ton mot de passe">
+          <button class="primary-button" type="submit">Se connecter <span>→</span></button>
+        </form>
+      </section>
+
+      <section class="screen" data-page="signup" hidden>
+        <button class="back-button" data-go="home">← Retour</button>
+        <div class="welcome-label">NOUVEAU MEMBRE</div>
+        <h2>Rejoins la classe.</h2>
+        <p class="muted">Il te faut un code personnel donné par le délégué.</p>
+        <form id="signupForm">
+          <label for="inviteCode">Code d'invitation</label>
+          <input id="inviteCode" required placeholder="Entre ton code">
+          <button class="primary-button" type="button" id="verifyCode">Vérifier le code <span>→</span></button>
+          <p id="welcomeName" class="success-message"></p>
+          <div id="signupFields" hidden>
+            <label for="newUsername">Ton identifiant</label>
+            <input id="newUsername" minlength="3" maxlength="24" required placeholder="3 à 24 caractères">
+            <label for="newPassword">Ton mot de passe</label>
+            <input id="newPassword" type="password" minlength="10" maxlength="128" required placeholder="10 caractères minimum">
+            <button class="primary-button" type="submit">Créer mon compte <span>→</span></button>
+          </div>
+        </form>
+      </section>
+
+      <section class="screen" data-page="delegate-login" hidden>
+        <button class="back-button" data-go="home">← Retour</button>
+        <div class="welcome-label">ACCÈS RESPONSABLE</div>
+        <h2>Espace délégué.</h2>
+        <p class="muted">Connecte-toi avec ton compte délégué.</p>
+        <form id="delegateLoginForm">
+          <label for="delegateUsername">Identifiant</label>
+          <input id="delegateUsername" autocomplete="username" required placeholder="Identifiant du délégué">
+          <label for="delegatePassword">Mot de passe</label>
+          <input id="delegatePassword" type="password" autocomplete="current-password" required placeholder="Mot de passe">
+          <button class="primary-button" type="submit">Accéder à mon espace <span>→</span></button>
+        </form>
+      </section>
+
+      <section class="screen" data-page="student" hidden>
+        <div class="welcome-label">ESPACE ÉLÈVE</div>
+        <h2 id="studentWelcome">Bienvenue !</h2>
+        <p class="muted">Tu es connecté à ton espace de classe.</p>
+        <div class="dashboard-card">
+          <span class="dashboard-icon">▦</span>
+          <div><strong>La classe 5e 3</strong><p>Ton espace personnel est prêt.</p></div>
+        </div>
+        <button class="primary-button" id="studentLogout">Se déconnecter</button>
+      </section>
+
+      <section class="screen" data-page="delegate" hidden>
+        <div class="welcome-label">ESPACE ADMINISTRATION</div>
+        <h2>Bonjour Ziyad !</h2>
+        <p class="muted">Bienvenue dans ton espace de délégué.</p>
+        <div class="dashboard-card">
+          <span class="dashboard-icon">♛</span>
+          <div><strong>Gestion des invitations</strong><p>Crée un code personnel pour un élève.</p></div>
+        </div>
+        <form id="invitationForm">
+          <label for="studentFirstName">Prénom de l'élève</label>
+          <input id="studentFirstName" required maxlength="60" placeholder="Prénom">
+          <button class="primary-button" type="submit">Générer un code <span>→</span></button>
+        </form>
+        <div id="generatedCode" class="generated-code" hidden></div>
+        <button class="back-button logout-button" id="delegateLogout">Se déconnecter</button>
+      </section>
+
+      <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
     </section>
   </main>
-
-  <script>
-    let currentInvitation = null;
-
-    document.getElementById("loginForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      try {
-        const profile = await ClassApp.login(
-          document.getElementById("loginUsername").value,
-          document.getElementById("loginPassword").value
-        );
-        ClassApp.showPage(profile.role === "delegate" ? "delegate" : "student");
-        alert(`Bienvenue ${profile.first_name} !`);
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
-    document.getElementById("delegateLoginForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      try {
-        const profile = await ClassApp.login(
-          document.getElementById("delegateUsername").value,
-          document.getElementById("delegatePassword").value
-        );
-        if (profile.role !== "delegate") {
-          await ClassApp.logout();
-          throw new Error("Accès réservé au délégué.");
-        }
-        ClassApp.showPage("delegate");
-        alert(`Bienvenue ${profile.first_name} !`);
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
-    document.getElementById("verifyCode").addEventListener("click", async () => {
-      try {
-        currentInvitation = await ClassApp.verifyInvitation(
-          document.getElementById("inviteCode").value
-        );
-        document.getElementById("welcomeName").textContent =
-          `Bienvenue ${currentInvitation.firstName} !`;
-        document.getElementById("signupFields").hidden = false;
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
-    document.getElementById("signupForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!currentInvitation) {
-        alert("Vérifie d'abord ton code.");
-        return;
-      }
-      try {
-        const result = await ClassApp.createStudentAccount(
-          document.getElementById("newUsername").value,
-          document.getElementById("newPassword").value,
-          currentInvitation
-        );
-        alert(result.message + " Tu peux maintenant te connecter.");
-        currentInvitation = null;
-        ClassApp.showPage("login");
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-
-    document.getElementById("invitationForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      try {
-        const result = await ClassApp.createInvitation(
-          document.getElementById("studentFirstName").value
-        );
-        document.getElementById("generatedCode").textContent =
-          `Code pour ${result.studentFirstName} : ${result.code}`;
-      } catch (error) {
-        alert(error.message);
-      }
-    });
-  </script>
 </body>
 </html>
