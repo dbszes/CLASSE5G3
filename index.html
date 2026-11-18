@@ -5,32 +5,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#17234b">
-  <title>Classe 5e 3</title>
+  <title>Classe 5e 3 | Espace de classe</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js" defer></script>
 </head>
 <body>
   <main class="layout">
+
     <section class="hero">
       <div class="hero-top">
         <div class="logo">5e<span>3</span></div>
-        <span class="school-tag">ESPACE DE CLASSE</span>
+        <span class="school-tag">✦ ESPACE DE CLASSE</span>
       </div>
 
       <div class="hero-content">
-        <p class="eyebrow">BIENVENUE DANS NOTRE UNIVERS</p>
+        <p class="eyebrow">BIENVENUE CHEZ NOUS</p>
         <h1>La 5e 3,<br>tous <span>ensemble.</span></h1>
         <p class="hero-description">
-          Le petit espace de notre classe pour retrouver les informations,
-          suivre les cours et rester en contact.
+          Un espace rien qu'à nous pour partager les informations,
+          retrouver les cours et faire vivre notre classe.
         </p>
+
         <div class="hero-line"></div>
+
         <div class="hero-bottom">
           <div class="hero-icon">✦</div>
           <div>
-            <strong>Une classe, un espace.</strong>
-            <p>Tout ce qui concerne notre classe au même endroit.</p>
+            <strong>Notre classe, notre espace.</strong>
+            <p>Tout ce qui nous rassemble au même endroit.</p>
           </div>
         </div>
       </div>
@@ -41,6 +44,7 @@
     </section>
 
     <section class="main-panel">
+
       <header class="panel-header">
         <span class="online-dot"></span>
         <span>PORTAIL DE LA CLASSE</span>
@@ -48,14 +52,14 @@
 
       <section class="screen" data-page="home">
         <div class="welcome-label">TON ESPACE NUMÉRIQUE</div>
-        <h2>Ravi de te retrouver !</h2>
-        <p class="muted">Choisis comment tu souhaites accéder à la classe.</p>
+        <h2>Heureux de te voir !</h2>
+        <p class="muted">Que souhaites-tu faire aujourd'hui ?</p>
 
         <button class="choice-card" data-go="login">
           <span class="choice-icon blue">↗</span>
           <span class="choice-copy">
             <strong>Se connecter</strong>
-            <small>J'ai déjà un compte</small>
+            <small>Retrouver mon espace personnel</small>
           </span>
           <span class="choice-arrow">›</span>
         </button>
@@ -64,7 +68,7 @@
           <span class="choice-icon purple">＋</span>
           <span class="choice-copy">
             <strong>Créer un compte</strong>
-            <small>J'ai un code d'invitation</small>
+            <small>J'ai reçu mon code d'invitation</small>
           </span>
           <span class="choice-arrow">›</span>
         </button>
@@ -78,54 +82,76 @@
           <span class="choice-arrow">›</span>
         </button>
 
-        <div class="panel-foot">Un espace privé réservé aux élèves de la 5e 3.</div>
+        <div class="panel-foot">
+          <span>✦</span> Un espace privé réservé aux élèves de la 5e 3.
+        </div>
       </section>
 
       <section class="screen" data-page="login" hidden>
-        <button class="back-button" data-go="home">← Retour</button>
-        <div class="welcome-label">BON RETOUR</div>
-        <h2>Connecte-toi.</h2>
-        <p class="muted">Retrouve ton espace personnel.</p>
+        <button class="back-button" data-go="home">← Retour à l'accueil</button>
+        <div class="welcome-label">BON RETOUR PARMI NOUS</div>
+        <h2>Content de te revoir.</h2>
+        <p class="muted">Connecte-toi pour retrouver ta classe.</p>
+
         <form id="loginForm">
-          <label for="loginUsername">Identifiant</label>
-          <input id="loginUsername" autocomplete="username" required placeholder="Ton identifiant">
-          <label for="loginPassword">Mot de passe</label>
-          <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Ton mot de passe">
-          <button class="primary-button" type="submit">Se connecter <span>→</span></button>
+          <label for="loginUsername">Ton identifiant</label>
+          <input id="loginUsername" autocomplete="username" required placeholder="Entre ton identifiant">
+
+          <label for="loginPassword">Ton mot de passe</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Entre ton mot de passe">
+
+          <button class="primary-button" type="submit">
+            Se connecter <span>→</span>
+          </button>
         </form>
       </section>
 
       <section class="screen" data-page="signup" hidden>
-        <button class="back-button" data-go="home">← Retour</button>
-        <div class="welcome-label">NOUVEAU MEMBRE</div>
-        <h2>Rejoins la classe.</h2>
-        <p class="muted">Il te faut un code personnel donné par le délégué.</p>
+        <button class="back-button" data-go="home">← Retour à l'accueil</button>
+        <div class="welcome-label">BIENVENUE DANS LA CLASSE</div>
+        <h2>Rejoins-nous !</h2>
+        <p class="muted">Utilise le code personnel donné par le délégué.</p>
+
         <form id="signupForm">
-          <label for="inviteCode">Code d'invitation</label>
+          <label for="inviteCode">Ton code d'invitation</label>
           <input id="inviteCode" required placeholder="Entre ton code">
-          <button class="primary-button" type="button" id="verifyCode">Vérifier le code <span>→</span></button>
+
+          <button class="primary-button" type="button" id="verifyCode">
+            Vérifier mon code <span>→</span>
+          </button>
+
           <p id="welcomeName" class="success-message"></p>
+
           <div id="signupFields" hidden>
-            <label for="newUsername">Ton identifiant</label>
-            <input id="newUsername" minlength="3" maxlength="24" required placeholder="3 à 24 caractères">
-            <label for="newPassword">Ton mot de passe</label>
+            <label for="newUsername">Choisis ton identifiant</label>
+            <input id="newUsername" minlength="3" maxlength="24" required placeholder="Ton futur identifiant">
+
+            <label for="newPassword">Choisis ton mot de passe</label>
             <input id="newPassword" type="password" minlength="10" maxlength="128" required placeholder="10 caractères minimum">
-            <button class="primary-button" type="submit">Créer mon compte <span>→</span></button>
+
+            <button class="primary-button" type="submit">
+              Créer mon compte <span>→</span>
+            </button>
           </div>
         </form>
       </section>
 
       <section class="screen" data-page="delegate-login" hidden>
-        <button class="back-button" data-go="home">← Retour</button>
+        <button class="back-button" data-go="home">← Retour à l'accueil</button>
         <div class="welcome-label">ACCÈS RESPONSABLE</div>
         <h2>Espace délégué.</h2>
         <p class="muted">Connecte-toi avec ton compte délégué.</p>
+
         <form id="delegateLoginForm">
           <label for="delegateUsername">Identifiant</label>
           <input id="delegateUsername" autocomplete="username" required placeholder="Identifiant du délégué">
+
           <label for="delegatePassword">Mot de passe</label>
           <input id="delegatePassword" type="password" autocomplete="current-password" required placeholder="Mot de passe">
-          <button class="primary-button" type="submit">Accéder à mon espace <span>→</span></button>
+
+          <button class="primary-button" type="submit">
+            Accéder à mon espace <span>→</span>
+          </button>
         </form>
       </section>
 
@@ -133,31 +159,51 @@
         <div class="welcome-label">ESPACE ÉLÈVE</div>
         <h2 id="studentWelcome">Bienvenue !</h2>
         <p class="muted">Tu es connecté à ton espace de classe.</p>
+
         <div class="dashboard-card">
           <span class="dashboard-icon">▦</span>
-          <div><strong>La classe 5e 3</strong><p>Ton espace personnel est prêt.</p></div>
+          <div>
+            <strong>La classe 5e 3</strong>
+            <p>Ton espace personnel est prêt.</p>
+          </div>
         </div>
-        <button class="primary-button" id="studentLogout">Se déconnecter</button>
+
+        <button class="primary-button" id="studentLogout">
+          Se déconnecter
+        </button>
       </section>
 
       <section class="screen" data-page="delegate" hidden>
         <div class="welcome-label">ESPACE ADMINISTRATION</div>
         <h2>Bonjour Ziyad !</h2>
         <p class="muted">Bienvenue dans ton espace de délégué.</p>
+
         <div class="dashboard-card">
           <span class="dashboard-icon">♛</span>
-          <div><strong>Gestion des invitations</strong><p>Crée un code personnel pour un élève.</p></div>
+          <div>
+            <strong>Gestion des invitations</strong>
+            <p>Crée un code personnel pour un élève.</p>
+          </div>
         </div>
+
         <form id="invitationForm">
           <label for="studentFirstName">Prénom de l'élève</label>
           <input id="studentFirstName" required maxlength="60" placeholder="Prénom">
-          <button class="primary-button" type="submit">Générer un code <span>→</span></button>
+
+          <button class="primary-button" type="submit">
+            Générer un code <span>→</span>
+          </button>
         </form>
+
         <div id="generatedCode" class="generated-code" hidden></div>
-        <button class="back-button logout-button" id="delegateLogout">Se déconnecter</button>
+
+        <button class="back-button logout-button" id="delegateLogout">
+          Se déconnecter
+        </button>
       </section>
 
       <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+
     </section>
   </main>
 </body>
